@@ -1,0 +1,42 @@
+{
+	"$schema": "https://deno.land/x/deno/cli/schemas/config-file.v1.json",
+	"name": "@hugoalh/fs",
+	"version": "0.1.0",
+	"exports": {
+		"./empty-dir": "./empty_dir.ts",
+		"./ensure-dir": "./ensure_dir.ts",
+		"./ensure-file": "./ensure_file.ts",
+		"./ensure-link": "./ensure_link.ts",
+		"./exist": "./exist.ts",
+		"./walk": "./walk.ts",
+		".": "./mod.ts"
+	},
+	"imports": {
+	},
+	"publish": {
+		"exclude": [
+			"**/*_bench.ts",
+			"**/*_bench.tsx",
+			"**/*_test.ts",
+			"**/*_test.tsx",
+			"**/*.bench.ts",
+			"**/*.bench.tsx",
+			"**/*.test.ts",
+			"**/*.test.tsx",
+			"**/bench.ts",
+			"**/bench.tsx",
+			"**/test.ts",
+			"**/test.tsx",
+			"npm/**",
+			".dnt.ts"
+		],
+		"include": [
+			"**/*.json",
+			"**/*.ts",
+			"**/*.tsx",
+			"jsr.jsonc",
+			"LICENSE*.md",
+			"README*.md"
+		]
+	}
+}

@@ -1,0 +1,570 @@
+import { fromFileUrl as getPathFromFileUrl } from "jsr:@std/path@^1.0.8/from-file-url";
+import { isAbsolute as isPathAbsolute } from "jsr:@std/path@^1.0.8/is-absolute";
+import { join as joinPath } from "jsr:@std/path@^1.0.8/join";
+import { relative as getPathRelative } from "jsr:@std/path@^1.0.8/relative";
+export interface FSWalkEntry {
+	/**
+	 * Whether the entry is a directory.
+	 * 
+	 * Mutually exclusive to the properties {@linkcode isFile}, {@linkcode isSymlinkDirectory}, and {@linkcode isSymlinkFile}.
+	 */
+	isDirectory: boolean;
+	/**
+	 * Whether the entry is a file.
+	 * 
+	 * Mutually exclusive to the properties {@linkcode isDirectory}, {@linkcode isSymlinkDirectory}, and {@linkcode isSymlinkFile}.
+	 */
+	isFile: boolean;
+	/**
+	 * Whether the entry is a symlink directory.
+	 * 
+	 * Mutually exclusive to the properties {@linkcode isDirectory}, {@linkcode isFile}, and {@linkcode isSymlinkFile}.
+	 */
+	isSymlinkDirectory: boolean;
+	/**
+	 * Whether the entry is a symlink file.
+	 * 
+	 * Mutually exclusive to the properties {@linkcode isDirectory}, {@linkcode isFile}, and {@linkcode isSymlinkDirectory}.
+	 */
+	isSymlinkFile: boolean;
+	/**
+	 * Name of the entry, does not include the path.
+	 */
+	name: string;
+	/**
+	 * Absolute path of the entry, access with through the symlinks.
+	 */
+	pathAbsolute: string;
+	/**
+	 * Real/Regular absolute path of the entry, access without through the symlinks.
+	 */
+	pathAbsoluteReal: string;
+	/**
+	 * Relative path of the entry, based from the root, access with through the symlinks.
+	 * 
+	 * This property maybe equivalent to the property {@linkcode pathAbsolute} if the location is on a different storage unit.
+	 */
+	pathRelative: string;
+	/**
+	 * Real/Regular relative path of the entry, based from the root, access without through the symlinks.
+	 * 
+	 * This property maybe equivalent to the property {@linkcode pathAbsoluteReal} if the real location is on a different storage unit.
+	 */
+	pathRelativeReal: string;
+	/**
+	 * Whether the entry is access through the symlink directory.
+	 */
+	viaSymlinkDirectory: boolean;
+}
+export interface FSWalkEntryExtra extends Omit<Deno.FileInfo, "isDirectory" | "isFile" | "isSymlink">, FSWalkEntry {
+}
+export interface FSWalkOptions {
+	/**
+	 * Maximum depth of the file tree should be walked recursively.
+	 * @default {Infinity}
+	 */
+	depth?: number;
+	/**
+	 * Include entries by file extensions.
+	 * 
+	 * If specified, entries which is a file or symlink file, and with any of these file extensions are included.
+	 * 
+	 * This property is only meaningful when properties {@linkcode includeFiles} or {@linkcode includeSymlinkFiles} are `true`.
+	 */
+	extensions?: string[];
+	/**
+	 * Whether to provide extra information of the entries.
+	 * @default {false}
+	 */
+	extraInfo?: boolean;
+	/**
+	 * Whether to include real/regular directory entries.
+	 * @default {true}
+	 */
+	includeDirectories?: boolean;
+	/**
+	 * Whether to include real/regular file entries.
+	 * @default {true}
+	 */
+	includeFiles?: boolean;
+	/**
+	 * Whether to include symlink directory entries.
+	 * @default {true}
+	 */
+	includeSymlinkDirectories?: boolean;
+	/**
+	 * Whether to include symlink file entries.
+	 * @default {true}
+	 */
+	includeSymlinkFiles?: boolean;
+	/**
+	 * Include entries by regular expressions.
+	 * 
+	 * If specified, entries which match any of these regular expressions are included.
+	 */
+	matches?: RegExp[];
+	/**
+	 * Exclude entries by regular expressions.
+	 * 
+	 * If specified, entries which match any of these regular expressions are excluded.
+	 */
+	skips?: RegExp[];
+	/**
+	 * Whether symlink directory entries should be walked recursively like the real/regular directory entries.
+	 * 
+	 * If the symlink directory is loop referenced, then the walk also looped until reach the {@linkcode depth} or runtime limit.
+	 * @default {false}
+	 */
+	walkSymlinkDirectories?: boolean;
+}
+interface FSWalkOptionsInternal extends Required<Omit<FSWalkOptions, "extensions" | "matches" | "skips">>, Pick<FSWalkOptions, "extensions" | "matches" | "skips"> {
+}
+function isEntryYieldable(entry: FSWalkEntry, options: FSWalkOptionsInternal): boolean {
+	const {
+		isDirectory,
+		isFile,
+		isSymlinkDirectory,
+		isSymlinkFile,
+		name,
+		pathRelative
+	}: FSWalkEntry = entry;
+	const {
+		extensions,
+		includeDirectories,
+		includeFiles,
+		includeSymlinkDirectories,
+		includeSymlinkFiles,
+		matches,
+		skips
+	}: FSWalkOptionsInternal = options;
+	if (
+		(isDirectory && !includeDirectories) ||
+		(isFile && !includeFiles) ||
+		(isSymlinkDirectory && !includeSymlinkDirectories) ||
+		(isSymlinkFile && !includeSymlinkFiles)
+	) {
+		return false;
+	}
+	if (typeof extensions !== "undefined") {
+		if (!(
+			isFile ||
+			isSymlinkFile
+		)) {
+			return false;
+		}
+		const nameLowerCase: string = name.toLowerCase();
+		if (
+			(extensions.length === 0 && nameLowerCase.includes(".")) ||
+			!extensions.some((extension: string): boolean => {
+				return nameLowerCase.endsWith(extension);
+			})
+		) {
+			return false;
+		}
+	}
+	if (typeof matches !== "undefined") {
+		if (
+			matches.length === 0 ||
+			!matches.some((match: RegExp): boolean => {
+				return match.test(pathRelative);
+			})
+		) {
+			return false;
+		}
+	}
+	if (typeof skips !== "undefined") {
+		if (skips.some((pattern: RegExp): boolean => {
+			return pattern.test(pathRelative);
+		})) {
+			return false;
+		}
+	}
+	return true;
+}
+interface FSWalkerParameters {
+	depthCurrent?: number;
+	root: string;
+	paths?: string[];
+	viaSymlinkDirectory?: boolean;
+}
+async function* walker(param: FSWalkerParameters, options: FSWalkOptionsInternal): AsyncGenerator<FSWalkEntry | FSWalkEntryExtra> {
+	const {
+		depthCurrent = 0,
+		root,
+		paths = [],
+		viaSymlinkDirectory = false
+	}: FSWalkerParameters = param;
+	const {
+		depth,
+		extraInfo,
+		walkSymlinkDirectories
+	}: FSWalkOptionsInternal = options;
+	for await (const {
+		isDirectory,
+		isFile,
+		isSymlink,
+		name
+	} of Deno.readDir(joinPath(root, ...paths))) {
+		const pathRelative: string = joinPath(...paths, name);
+		const pathAbsolute: string = joinPath(root, pathRelative);
+		const pathAbsoluteReal: string = await Deno.realPath(pathAbsolute);
+		const pathRelativeReal: string = getPathRelative(root, pathAbsoluteReal);
+		let isSymlinkDirectory: boolean;
+		let isSymlinkFile: boolean;
+		let infoReal: Deno.FileInfo | undefined;
+		if (isSymlink) {
+			infoReal = await Deno.stat(pathAbsoluteReal);
+			isSymlinkDirectory = infoReal.isDirectory;
+			isSymlinkFile = infoReal.isFile;
+		} else {
+			isSymlinkDirectory = false;
+			isSymlinkFile = false;
+		}
+		const entryMeta: FSWalkEntry = {
+			isDirectory,
+			isFile,
+			isSymlinkDirectory,
+			isSymlinkFile,
+			name,
+			pathAbsolute,
+			pathAbsoluteReal,
+			pathRelative,
+			pathRelativeReal,
+			viaSymlinkDirectory
+		};
+		if (isEntryYieldable(entryMeta, options)) {
+			if (extraInfo) {
+				if (typeof infoReal === "undefined") {
+					infoReal = await Deno.stat(pathAbsoluteReal);
+				}
+				yield {
+					...entryMeta,
+					atime: infoReal?.atime,
+					birthtime: infoReal?.birthtime,
+					blksize: infoReal?.blksize,
+					blocks: infoReal?.blocks,
+					ctime: infoReal?.ctime,
+					dev: infoReal?.dev,
+					gid: infoReal?.gid,
+					ino: infoReal?.ino,
+					isBlockDevice: infoReal?.isBlockDevice,
+					isCharDevice: infoReal?.isCharDevice,
+					isFifo: infoReal?.isFifo,
+					isSocket: infoReal?.isSocket,
+					mode: infoReal?.mode,
+					mtime: infoReal?.mtime,
+					nlink: infoReal?.nlink,
+					rdev: infoReal?.rdev,
+					size: infoReal?.size,
+					uid: infoReal?.uid
+				};
+			} else {
+				yield entryMeta;
+			}
+		}
+		if ((
+			isDirectory ||
+			(isSymlinkDirectory && walkSymlinkDirectories)
+		) && depthCurrent < depth) {
+			yield* walker({
+				depthCurrent: depthCurrent + 1,
+				paths: [...paths, name],
+				root,
+				viaSymlinkDirectory: viaSymlinkDirectory || isSymlinkDirectory
+			}, options);
+		}
+	}
+}
+function* walkerSync(param: FSWalkerParameters, options: FSWalkOptionsInternal): Generator<FSWalkEntry | FSWalkEntryExtra> {
+	const {
+		depthCurrent = 0,
+		root,
+		paths = [],
+		viaSymlinkDirectory = false
+	}: FSWalkerParameters = param;
+	const {
+		depth,
+		extraInfo,
+		walkSymlinkDirectories
+	}: FSWalkOptionsInternal = options;
+	for (const {
+		isDirectory,
+		isFile,
+		isSymlink,
+		name
+	} of Deno.readDirSync(joinPath(root, ...paths))) {
+		const pathRelative: string = joinPath(...paths, name);
+		const pathAbsolute: string = joinPath(root, pathRelative);
+		const pathAbsoluteReal: string = Deno.realPathSync(pathAbsolute);
+		const pathRelativeReal: string = getPathRelative(root, pathAbsoluteReal);
+		let isSymlinkDirectory: boolean;
+		let isSymlinkFile: boolean;
+		let infoReal: Deno.FileInfo | undefined;
+		if (isSymlink) {
+			infoReal = Deno.statSync(pathAbsoluteReal);
+			isSymlinkDirectory = infoReal.isDirectory;
+			isSymlinkFile = infoReal.isFile;
+		} else {
+			isSymlinkDirectory = false;
+			isSymlinkFile = false;
+		}
+		const entryMeta: FSWalkEntry = {
+			isDirectory,
+			isFile,
+			isSymlinkDirectory,
+			isSymlinkFile,
+			name,
+			pathAbsolute,
+			pathAbsoluteReal,
+			pathRelative,
+			pathRelativeReal,
+			viaSymlinkDirectory
+		};
+		if (isEntryYieldable(entryMeta, options)) {
+			if (extraInfo) {
+				if (typeof infoReal === "undefined") {
+					infoReal = Deno.statSync(pathAbsoluteReal);
+				}
+				yield {
+					...entryMeta,
+					atime: infoReal?.atime,
+					birthtime: infoReal?.birthtime,
+					blksize: infoReal?.blksize,
+					blocks: infoReal?.blocks,
+					ctime: infoReal?.ctime,
+					dev: infoReal?.dev,
+					gid: infoReal?.gid,
+					ino: infoReal?.ino,
+					isBlockDevice: infoReal?.isBlockDevice,
+					isCharDevice: infoReal?.isCharDevice,
+					isFifo: infoReal?.isFifo,
+					isSocket: infoReal?.isSocket,
+					mode: infoReal?.mode,
+					mtime: infoReal?.mtime,
+					nlink: infoReal?.nlink,
+					rdev: infoReal?.rdev,
+					size: infoReal?.size,
+					uid: infoReal?.uid
+				};
+			} else {
+				yield entryMeta;
+			}
+		}
+		if ((
+			isDirectory ||
+			(isSymlinkDirectory && walkSymlinkDirectories)
+		) && depthCurrent < depth) {
+			yield* walkerSync({
+				depthCurrent: depthCurrent + 1,
+				paths: [...paths, name],
+				root,
+				viaSymlinkDirectory: viaSymlinkDirectory || isSymlinkDirectory
+			}, options);
+		}
+	}
+}
+function resolveRootPath(root: string | URL): string {
+	const rootFmt: string = (root instanceof URL) ? getPathFromFileUrl(root) : root;
+	return (isPathAbsolute(rootFmt) ? rootFmt : joinPath(Deno.cwd(), rootFmt));
+}
+function resolveWalkOptions(options: FSWalkOptions): FSWalkOptionsInternal {
+	const {
+		depth = Infinity,
+		extensions,
+		extraInfo = false,
+		includeDirectories = true,
+		includeFiles = true,
+		includeSymlinkDirectories = true,
+		includeSymlinkFiles = true,
+		matches,
+		skips,
+		walkSymlinkDirectories = false
+	}: FSWalkOptions = options;
+	if (depth !== Infinity && !(Number.isSafeInteger(depth) && depth >= 0)) {
+		throw new RangeError(`Parameter \`options.depth\` is not \`Infinity\`, or a number which is integer, positive, and safe!`);
+	}
+	return {
+		depth,
+		extensions: extensions?.map((extension: string): string => {
+			return (extension.startsWith(".") ? extension : `.${extension}`).toLowerCase();
+		}),
+		extraInfo,
+		includeDirectories,
+		includeFiles,
+		includeSymlinkDirectories,
+		includeSymlinkFiles,
+		matches,
+		skips,
+		walkSymlinkDirectories
+	};
+}
+function resolveWalkParameters(param0: string | URL | FSWalkOptions | undefined, param1: FSWalkOptions | undefined) {
+	let rootRaw: string | URL;
+	let optionsRaw: FSWalkOptions | undefined;
+	if (
+		typeof param0 === "string" ||
+		param0 instanceof URL
+	) {
+		rootRaw = param0;
+		optionsRaw = param1;
+	} else {
+		rootRaw = Deno.cwd();
+		optionsRaw = param0;
+	}
+	return {
+		options: resolveWalkOptions(optionsRaw ?? {}),
+		root: resolveRootPath(rootRaw)
+	};
+}
+/**
+ * Walk through the directory and yield information about each entry encountered, asynchronously.
+ * 
+ * The order of entries is not guaranteed.
+ * 
+ * > **🛡️ Runtime Permissions**
+ * >
+ * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * >   - *Resources*
+ * @param {string | URL} root Root directory.
+ * @param {FSWalkOptions & { extraInfo?: false; }} [options] Options.
+ * @returns {Promise<AsyncGenerator<FSWalkEntry>>} An async iterable iterator that yields the walk entry information.
+ */
+export async function walk(root: string | URL, options?: FSWalkOptions & { extraInfo?: false; }): Promise<AsyncGenerator<FSWalkEntry>>;
+/**
+ * Walk through the directory and yield information about each entry encountered, asynchronously.
+ * 
+ * The order of entries is not guaranteed.
+ * 
+ * > **🛡️ Runtime Permissions**
+ * >
+ * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * >   - *Resources*
+ * @param {FSWalkOptions & { extraInfo?: false; }} [options] Options.
+ * @returns {Promise<AsyncGenerator<FSWalkEntry>>} An async iterable iterator that yields the walk entry information.
+ */
+export async function walk(options?: FSWalkOptions & { extraInfo?: false; }): Promise<AsyncGenerator<FSWalkEntry>>;
+/**
+/**
+ * Walk through the directory and yield information about each entry encountered, asynchronously.
+ * 
+ * The order of entries is not guaranteed.
+ * 
+ * > **🛡️ Runtime Permissions**
+ * >
+ * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * >   - *Resources*
+ * @param {string | URL} root Root directory.
+ * @param {FSWalkOptions & { extraInfo: true; }} options Options.
+ * @returns {Promise<AsyncGenerator<FSWalkEntryExtra>>} An async iterable iterator that yields the walk entry information.
+ */
+export async function walk(root: string | URL, options: FSWalkOptions & { extraInfo: true; }): Promise<AsyncGenerator<FSWalkEntryExtra>>;
+/**
+ * Walk through the directory and yield information about each entry encountered, asynchronously.
+ * 
+ * The order of entries is not guaranteed.
+ * 
+ * > **🛡️ Runtime Permissions**
+ * >
+ * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * >   - *Resources*
+ * @param {FSWalkOptions & { extraInfo: true; }} options Options.
+ * @returns {Promise<AsyncGenerator<FSWalkEntryExtra>>} An async iterable iterator that yields the walk entry information.
+ */
+export async function walk(options: FSWalkOptions & { extraInfo: true; }): Promise<AsyncGenerator<FSWalkEntryExtra>>;
+export async function walk(param0?: string | URL | FSWalkOptions, param1?: FSWalkOptions): Promise<AsyncGenerator<FSWalkEntry | FSWalkEntryExtra>> {
+	const {
+		options,
+		root
+	} = resolveWalkParameters(param0, param1);
+	const rootStatL: Deno.FileInfo = await Deno.lstat(root);
+	if (!rootStatL.isDirectory) {
+		if (rootStatL.isSymlink) {
+			const rootStatR: Deno.FileInfo = await Deno.stat(root);
+			if (!(rootStatR.isDirectory && options.walkSymlinkDirectories)) {
+				throw new Error(`Path \`${root}\` is a symlink directory but forbid to walk!`);
+			}
+		} else {
+			throw new Deno.errors.NotADirectory(`Path \`${root}\` is not a directory!`);
+		}
+	}
+	return walker({
+		root,
+		viaSymlinkDirectory: !rootStatL.isDirectory
+	}, options);
+}
+/**
+ * Walk through the directory and yield information about each entry encountered, synchronously.
+ * 
+ * The order of entries is not guaranteed.
+ * 
+ * > **🛡️ Runtime Permissions**
+ * >
+ * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * >   - *Resources*
+ * @param {string | URL} root Root directory.
+ * @param {FSWalkOptions & { extraInfo?: false; }} [options] Options.
+ * @returns {Generator<FSWalkEntry>} A sync iterable iterator that yields the walk entry information.
+ */
+export function walkSync(root: string | URL, options?: FSWalkOptions & { extraInfo?: false; }): Generator<FSWalkEntry>;
+/**
+ * Walk through the directory and yield information about each entry encountered, synchronously.
+ * 
+ * The order of entries is not guaranteed.
+ * 
+ * > **🛡️ Runtime Permissions**
+ * >
+ * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * >   - *Resources*
+ * @param {FSWalkOptions & { extraInfo?: false; }} [options] Options.
+ * @returns {Generator<FSWalkEntry>} A sync iterable iterator that yields the walk entry information.
+ */
+export function walkSync(options?: FSWalkOptions & { extraInfo?: false; }): Generator<FSWalkEntry>;
+/**
+/**
+ * Walk through the directory and yield information about each entry encountered, synchronously.
+ * 
+ * The order of entries is not guaranteed.
+ * 
+ * > **🛡️ Runtime Permissions**
+ * >
+ * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * >   - *Resources*
+ * @param {string | URL} root Root directory.
+ * @param {FSWalkOptions & { extraInfo: true; }} options Options.
+ * @returns {Generator<FSWalkEntryExtra>} A sync iterable iterator that yields the walk entry information.
+ */
+export function walkSync(root: string | URL, options: FSWalkOptions & { extraInfo: true; }): Generator<FSWalkEntryExtra>;
+/**
+ * Walk through the directory and yield information about each entry encountered, synchronously.
+ * 
+ * The order of entries is not guaranteed.
+ * 
+ * > **🛡️ Runtime Permissions**
+ * >
+ * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * >   - *Resources*
+ * @param {FSWalkOptions & { extraInfo: true; }} options Options.
+ * @returns {Generator<FSWalkEntryExtra>} A sync iterable iterator that yields the walk entry information.
+ */
+export function walkSync(options: FSWalkOptions & { extraInfo: true; }): Generator<FSWalkEntryExtra>;
+export function walkSync(param0?: string | URL | FSWalkOptions, param1?: FSWalkOptions): Generator<FSWalkEntry | FSWalkEntryExtra> {
+	const {
+		options,
+		root
+	} = resolveWalkParameters(param0, param1);
+	const rootStatL: Deno.FileInfo = Deno.lstatSync(root);
+	if (!rootStatL.isDirectory) {
+		if (rootStatL.isSymlink) {
+			const rootStatR: Deno.FileInfo = Deno.statSync(root);
+			if (!(rootStatR.isDirectory && options.walkSymlinkDirectories)) {
+				throw new Error(`Path \`${root}\` is a symlink directory but forbid to walk!`);
+			}
+		} else {
+			throw new Deno.errors.NotADirectory(`Path \`${root}\` is not a directory!`);
+		}
+	}
+	return walkerSync({
+		root,
+		viaSymlinkDirectory: !rootStatL.isDirectory
+	}, options);
+}
