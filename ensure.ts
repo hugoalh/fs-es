@@ -93,7 +93,7 @@ export {
 export async function ensureFile(path: string | URL): Promise<void> {
 	const pathFmt: string = (path instanceof URL) ? getPathFromFileUrl(path) : path;
 	try {
-		const entityType: EntityType = getEntityTypeString(await Deno.lstat(pathFmt));
+		const entityType: EntityType = getEntityTypeString(await Deno.lstat(path));
 		if (entityType !== "file") {
 			throw new Error(`Unable to ensure the file \`${path}\` exist, path is a ${entityType}!`);
 		}
@@ -102,7 +102,7 @@ export async function ensureFile(path: string | URL): Promise<void> {
 			throw error;
 		}
 		await ensureDir(getPathDirname(pathFmt));
-		await Deno.writeFile(pathFmt, new Uint8Array());
+		await Deno.writeFile(path, new Uint8Array());
 	}
 }
 /**
@@ -126,7 +126,7 @@ export async function ensureFile(path: string | URL): Promise<void> {
 export function ensureFileSync(path: string | URL): void {
 	const pathFmt: string = (path instanceof URL) ? getPathFromFileUrl(path) : path;
 	try {
-		const entityType: EntityType = getEntityTypeString(Deno.lstatSync(pathFmt));
+		const entityType: EntityType = getEntityTypeString(Deno.lstatSync(path));
 		if (entityType !== "file") {
 			throw new Error(`Unable to ensure the file \`${path}\` exist, path is a ${entityType}!`);
 		}
@@ -135,7 +135,7 @@ export function ensureFileSync(path: string | URL): void {
 			throw error;
 		}
 		ensureDirSync(getPathDirname(pathFmt));
-		Deno.writeFileSync(pathFmt, new Uint8Array());
+		Deno.writeFileSync(path, new Uint8Array());
 	}
 }
 /**
