@@ -12,7 +12,9 @@ export {
 	ensureFile,
 	ensureFileSync,
 	ensureLink,
-	ensureLinkSync
+	ensureLinkSync,
+	ensureSymlink,
+	ensureSymlinkSync
 } from "./ensure.ts";
 export {
 	exist,

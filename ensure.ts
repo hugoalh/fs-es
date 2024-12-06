@@ -1,5 +1,6 @@
 import { dirname as getPathDirname } from "jsr:@std/path@^1.0.8/dirname";
 import { fromFileUrl as getPathFromFileUrl } from "jsr:@std/path@^1.0.8/from-file-url";
+import { resolve as resolvePath } from "jsr:@std/path@^1.0.8/resolve";
 import {
 	getEntityTypeString,
 	type EntityType
@@ -191,4 +192,92 @@ export function ensureLinkSync(src: string | URL, dest: string | URL): void {
 	const destFmt: string = (dest instanceof URL) ? getPathFromFileUrl(dest) : dest;
 	ensureDirSync(getPathDirname(destFmt));
 	Deno.linkSync(srcFmt, destFmt);
+}
+/**
+ * Ensure the symlink does exist, asynchronously.
+ * 
+ * If the symlink does exist, then nothing happened, otherwise it is created.
+ * 
+ * > **🛡️ Runtime Permissions**
+ * > 
+ * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * >   - *Resources*
+ * > - File System - Write \[Deno: `write`; NodeJS 🧪: `fs-write`\]
+ * >   - *Resources*
+ * @param {string | URL} src Path of the source.
+ * @param {string | URL} dest Path of the symlink.
+ * @returns {Promise<void>}
+ * @example
+ * ```ts
+ * await ensureSymlink("./path/to/source.dat", "./path/to/link.dat");
+ * ```
+ */
+export async function ensureSymlink(src: string | URL, dest: string | URL): Promise<void> {
+	const srcFmt: string = (src instanceof URL) ? getPathFromFileUrl(src) : src;
+	const destFmt: string = (dest instanceof URL) ? getPathFromFileUrl(dest) : dest;
+	const srcStat: Deno.FileInfo = await Deno.lstat(src);
+	try {
+		const destEntityType: EntityType = getEntityTypeString(await Deno.lstat(dest));
+		if (destEntityType !== "symlink") {
+			throw new Error(`Unable to ensure the symlink \`${dest}\` exist, path is a ${destEntityType}!`);
+		}
+		if (resolvePath(srcFmt) !== await Deno.readLink(dest)) {
+			throw undefined;
+		}
+	} catch (error) {
+		if (!(
+			typeof error === "undefined" ||
+			error instanceof Deno.errors.NotFound
+		)) {
+			throw error;
+		}
+		await ensureDir(getPathDirname(destFmt));
+		await Deno.symlink(src, dest, {
+			type: srcStat.isDirectory ? "dir" : "file"
+		});
+	}
+}
+/**
+ * Ensure the symlink does exist, synchronously.
+ * 
+ * If the symlink does exist, then nothing happened, otherwise it is created.
+ * 
+ * > **🛡️ Runtime Permissions**
+ * > 
+ * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * >   - *Resources*
+ * > - File System - Write \[Deno: `write`; NodeJS 🧪: `fs-write`\]
+ * >   - *Resources*
+ * @param {string | URL} src Path of the source.
+ * @param {string | URL} dest Path of the symlink.
+ * @returns {void}
+ * @example
+ * ```ts
+ * ensureSymlinkSync("./path/to/source.dat", "./path/to/link.dat");
+ * ```
+ */
+export function ensureSymlinkSync(src: string | URL, dest: string | URL): void {
+	const srcFmt: string = (src instanceof URL) ? getPathFromFileUrl(src) : src;
+	const destFmt: string = (dest instanceof URL) ? getPathFromFileUrl(dest) : dest;
+	const srcStat: Deno.FileInfo = Deno.lstatSync(src);
+	try {
+		const destEntityType: EntityType = getEntityTypeString(Deno.lstatSync(dest));
+		if (destEntityType !== "symlink") {
+			throw new Error(`Unable to ensure the symlink \`${dest}\` exist, path is a ${destEntityType}!`);
+		}
+		if (resolvePath(srcFmt) !== Deno.readLinkSync(dest)) {
+			throw undefined;
+		}
+	} catch (error) {
+		if (!(
+			typeof error === "undefined" ||
+			error instanceof Deno.errors.NotFound
+		)) {
+			throw error;
+		}
+		ensureDirSync(getPathDirname(destFmt));
+		Deno.symlinkSync(src, dest, {
+			type: srcStat.isDirectory ? "dir" : "file"
+		});
+	}
 }

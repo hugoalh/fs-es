@@ -72,6 +72,9 @@ An ES (JavaScript & TypeScript) module for enhanced file system operation.
   function ensureLink(src: string | URL, dest: string | URL): Promise<void>;
   ```
 - ```ts
+  function ensureSymlink(src: string | URL, dest: string | URL): Promise<void>;
+  ```
+- ```ts
   function exist(path: string | URL, options?: FSExistOptions): Promise<boolean>;
   ```
 - ```ts
@@ -99,6 +102,9 @@ An ES (JavaScript & TypeScript) module for enhanced file system operation.
   ```
 - ```ts
   await ensureLink("./path/to/source.dat", "./path/to/link.dat");
+  ```
+- ```ts
+  await ensureSymlink("./path/to/source.dat", "./path/to/link.dat");
   ```
 - ```ts
   await exist("./exist");
