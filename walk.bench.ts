@@ -2,25 +2,25 @@ import {
 	walk,
 	walkSync
 } from "./walk.ts";
-Deno.test("Async", {
+Deno.bench("Async", {
 	permissions: {
 		read: [Deno.cwd()]
 	}
 }, async () => {
-	console.log(await Array.fromAsync(await walk(Deno.cwd(), {
+	await Array.fromAsync(await walk(Deno.cwd(), {
 		skips: [
 			/^\.git[\\\/]/
 		]
-	})));
+	}));
 });
-Deno.test("Sync", {
+Deno.bench("Sync", {
 	permissions: {
 		read: [Deno.cwd()]
 	}
 }, () => {
-	console.log(Array.from(walkSync(Deno.cwd(), {
+	Array.from(walkSync(Deno.cwd(), {
 		skips: [
 			/^\.git[\\\/]/
 		]
-	})));
+	}));
 });
