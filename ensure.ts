@@ -170,7 +170,7 @@ export async function ensureLink(src: string | URL, dest: string | URL): Promise
 	await Deno.link(srcFmt, destFmt);
 }
 /**
- * Ensure the hard link does exist, asynchronously.
+ * Ensure the hard link does exist, synchronously.
  * 
  * If the hard link does exist, then nothing happened, otherwise it is created.
  * 
