@@ -33,7 +33,6 @@ export async function ensureDir(path: string | URL): Promise<void> {
 			throw error;
 		}
 		await Deno.mkdir(path, { recursive: true });
-		return ensureDir(path);
 	}
 }
 export {
@@ -68,7 +67,6 @@ export function ensureDirSync(path: string | URL): void {
 			throw error;
 		}
 		Deno.mkdirSync(path, { recursive: true });
-		return ensureDirSync(path);
 	}
 }
 export {
@@ -105,7 +103,6 @@ export async function ensureFile(path: string | URL): Promise<void> {
 		}
 		await ensureDir(getPathDirname(pathFmt));
 		await Deno.writeFile(pathFmt, new Uint8Array());
-		return ensureFile(path);
 	}
 }
 /**
@@ -139,7 +136,6 @@ export function ensureFileSync(path: string | URL): void {
 		}
 		ensureDirSync(getPathDirname(pathFmt));
 		Deno.writeFileSync(pathFmt, new Uint8Array());
-		return ensureFileSync(path);
 	}
 }
 /**
