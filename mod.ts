@@ -20,6 +20,10 @@ export {
 	type FSExistOptions
 } from "./exist.ts";
 export {
+	getSize,
+	getSizeSync
+} from "./size.ts";
+export {
 	walk,
 	walkSync,
 	type FSWalkEntry,
