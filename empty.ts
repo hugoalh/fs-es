@@ -3,7 +3,7 @@ import { join as joinPath } from "jsr:@std/path@^1.0.8/join";
 import {
 	ensureDir,
 	ensureDirSync
-} from "./ensure_dir.ts";
+} from "./ensure.ts";
 /**
  * Ensure the directory is empty and no contents, asynchronously.
  * 

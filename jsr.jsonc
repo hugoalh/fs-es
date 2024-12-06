@@ -3,10 +3,8 @@
 	"name": "@hugoalh/fs",
 	"version": "0.1.0",
 	"exports": {
-		"./empty-dir": "./empty_dir.ts",
-		"./ensure-dir": "./ensure_dir.ts",
-		"./ensure-file": "./ensure_file.ts",
-		"./ensure-link": "./ensure_link.ts",
+		"./empty": "./empty.ts",
+		"./ensure": "./ensure.ts",
 		"./exist": "./exist.ts",
 		"./walk": "./walk.ts",
 		".": "./mod.ts"

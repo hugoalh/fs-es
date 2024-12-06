@@ -3,21 +3,17 @@ export {
 	emptyDirectory,
 	emptyDirectorySync,
 	emptyDirSync
-} from "./empty_dir.ts";
+} from "./empty.ts";
 export {
 	ensureDir,
 	ensureDirectory,
 	ensureDirectorySync,
-	ensureDirSync
-} from "./ensure_dir.ts";
-export {
+	ensureDirSync,
 	ensureFile,
-	ensureFileSync
-} from "./ensure_file.ts";
-export {
+	ensureFileSync,
 	ensureLink,
 	ensureLinkSync
-} from "./ensure_link.ts";
+} from "./ensure.ts";
 export {
 	exist,
 	existSync,
