@@ -72,7 +72,7 @@ An ES (JavaScript & TypeScript) module for enhanced file system operation.
   function ensureLink(src: string | URL, dest: string | URL): Promise<void>;
   ```
 - ```ts
-  function exist(path: string | URL, options: FSExistOptions = {}): Promise<boolean>;
+  function exist(path: string | URL, options?: FSExistOptions): Promise<boolean>;
   ```
 - ```ts
   function walk(root: string | URL, options?: FSWalkOptions & { extraInfo?: false; }): Promise<AsyncGenerator<FSWalkEntry>>;
