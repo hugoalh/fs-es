@@ -24,7 +24,7 @@ export async function ensureDir(path: string | URL): Promise<void> {
 	try {
 		const pathInfo: Deno.FileInfo = await Deno.lstat(path);
 		if (!pathInfo.isDirectory) {
-			throw new Error(`Unable to ensure the directory \`${path}\` exist, path is a ${getEntityTypeString(pathInfo)}!`);
+			throw new Error(`Unable to ensure the directory \`${path}\` exist, path is type of ${getEntityTypeString(pathInfo)}!`);
 		}
 	} catch (error) {
 		if (!(error instanceof Deno.errors.NotFound)) {
@@ -58,7 +58,7 @@ export function ensureDirSync(path: string | URL): void {
 	try {
 		const pathInfo: Deno.FileInfo = Deno.lstatSync(path);
 		if (!pathInfo.isDirectory) {
-			throw new Error(`Unable to ensure the directory \`${path}\` exist, path is a ${getEntityTypeString(pathInfo)}!`);
+			throw new Error(`Unable to ensure the directory \`${path}\` exist, path is type of ${getEntityTypeString(pathInfo)}!`);
 		}
 	} catch (error) {
 		if (!(error instanceof Deno.errors.NotFound)) {
@@ -93,7 +93,7 @@ export async function ensureFile(path: string | URL): Promise<void> {
 	try {
 		const pathInfo: Deno.FileInfo = await Deno.lstat(path);
 		if (!pathInfo.isFile) {
-			throw new Error(`Unable to ensure the file \`${path}\` exist, path is a ${getEntityTypeString(pathInfo)}!`);
+			throw new Error(`Unable to ensure the file \`${path}\` exist, path is type of ${getEntityTypeString(pathInfo)}!`);
 		}
 	} catch (error) {
 		if (!(error instanceof Deno.errors.NotFound)) {
@@ -126,7 +126,7 @@ export function ensureFileSync(path: string | URL): void {
 	try {
 		const pathInfo: Deno.FileInfo = Deno.lstatSync(path);
 		if (!pathInfo.isFile) {
-			throw new Error(`Unable to ensure the file \`${path}\` exist, path is a ${getEntityTypeString(pathInfo)}!`);
+			throw new Error(`Unable to ensure the file \`${path}\` exist, path is type of ${getEntityTypeString(pathInfo)}!`);
 		}
 	} catch (error) {
 		if (!(error instanceof Deno.errors.NotFound)) {
@@ -216,7 +216,7 @@ export async function ensureSymlink(src: string | URL, dest: string | URL): Prom
 	try {
 		const destInfo: Deno.FileInfo = await Deno.lstat(dest);
 		if (!destInfo.isSymlink) {
-			throw new Error(`Unable to ensure the symlink \`${dest}\` exist, path is a ${getEntityTypeString(destInfo)}!`);
+			throw new Error(`Unable to ensure the symlink \`${dest}\` exist, path is type of ${getEntityTypeString(destInfo)}!`);
 		}
 		if (resolvePath(srcFmt) !== await Deno.readLink(dest)) {
 			throw undefined;
@@ -260,7 +260,7 @@ export function ensureSymlinkSync(src: string | URL, dest: string | URL): void {
 	try {
 		const destInfo: Deno.FileInfo = Deno.lstatSync(dest);
 		if (!destInfo.isSymlink) {
-			throw new Error(`Unable to ensure the symlink \`${dest}\` exist, path is a ${getEntityTypeString(destInfo)}!`);
+			throw new Error(`Unable to ensure the symlink \`${dest}\` exist, path is type of ${getEntityTypeString(destInfo)}!`);
 		}
 		if (resolvePath(srcFmt) !== Deno.readLinkSync(dest)) {
 			throw undefined;
