@@ -78,6 +78,9 @@ An ES (JavaScript & TypeScript) module for enhanced file system operation.
   function exist(path: string | URL, options?: FSExistOptions): Promise<boolean>;
   ```
 - ```ts
+  function getSize(path?: string | URL): Promise<bigint>;
+  ```
+- ```ts
   function walk(root: string | URL, options?: FSWalkOptions & { extraInfo?: false; }): Promise<AsyncGenerator<FSWalkEntry>>;
   function walk(options?: FSWalkOptions & { extraInfo?: false; }): Promise<AsyncGenerator<FSWalkEntry>>;
   function walk(root: string | URL, options: FSWalkOptions & { extraInfo: true; }): Promise<AsyncGenerator<FSWalkEntryExtra>>;

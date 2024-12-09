@@ -6,6 +6,7 @@
 		"./empty": "./empty.ts",
 		"./ensure": "./ensure.ts",
 		"./exist": "./exist.ts",
+		"./size": "./size.ts",
 		"./walk": "./walk.ts",
 		".": "./mod.ts"
 	},
