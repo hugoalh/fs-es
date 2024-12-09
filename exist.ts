@@ -110,15 +110,15 @@ export async function exist(path: string | URL, options: FSExistOptions = {}): P
 		throw new Error(`Parameters \`options.isDirectory\` and \`options.isFile\` are mutually exclusive!`);
 	}
 	try {
-		const entityStat: Deno.FileInfo = await Deno.stat(path);
+		const pathStat: Deno.FileInfo = await Deno.stat(path);
 		if (
-			(isDirectory && !entityStat.isDirectory) ||
-			(isFile && !entityStat.isFile)
+			(isDirectory && !pathStat.isDirectory) ||
+			(isFile && !pathStat.isFile)
 		) {
 			return false;
 		}
 		if (isReadable) {
-			return isEntityReadable(entityStat);
+			return isEntityReadable(pathStat);
 		}
 		return true;
 	} catch (error) {
@@ -153,54 +153,54 @@ export async function exist(path: string | URL, options: FSExistOptions = {}): P
  * @param {FSExistOptions} [options={}] Options.
  * @returns {boolean} Determine result.
  * @example Test a path
-* ```ts
-* existSync("./exist");
-* //=> true
-* 
-* existSync("./not_exist");
-* //=> false
-* ```
-* @example Test the path whether is readable
-* ```ts
-* existSync("./readable", { isReadable: true });
-* //=> true
-* 
-* existSync("./not_readable", { isReadable: true });
-* //=> false
-* ```
-* @example Test the path whether is a directory
-* ```ts
-* existSync("./directory", { isDirectory: true });
-* //=> true
-* 
-* existSync("./file", { isDirectory: true });
-* //=> false
-* ```
-* @example Test the path whether is a file
-* ```ts
-* existSync("./file", { isFile: true });
-* //=> true
-* 
-* existSync("./directory", { isFile: true });
-* //=> false
-* ```
-* @example Test the path whether is a readable directory
-* ```ts
-* existSync("./readable_directory", { isReadable: true, isDirectory: true });
-* //=> true
-* 
-* existSync("./not_readable_directory", { isReadable: true, isDirectory: true });
-* //=> false
-* ```
-* @example Test the path whether is a readable file
-* ```ts
-* existSync("./readable_file", { isReadable: true, isFile: true });
-* //=> true
-* 
-* existSync("./not_readable_file", { isReadable: true, isFile: true });
-* //=> false
-* ```
-*/
+ * ```ts
+ * existSync("./exist");
+ * //=> true
+ * 
+ * existSync("./not_exist");
+ * //=> false
+ * ```
+ * @example Test the path whether is readable
+ * ```ts
+ * existSync("./readable", { isReadable: true });
+ * //=> true
+ * 
+ * existSync("./not_readable", { isReadable: true });
+ * //=> false
+ * ```
+ * @example Test the path whether is a directory
+ * ```ts
+ * existSync("./directory", { isDirectory: true });
+ * //=> true
+ * 
+ * existSync("./file", { isDirectory: true });
+ * //=> false
+ * ```
+ * @example Test the path whether is a file
+ * ```ts
+ * existSync("./file", { isFile: true });
+ * //=> true
+ * 
+ * existSync("./directory", { isFile: true });
+ * //=> false
+ * ```
+ * @example Test the path whether is a readable directory
+ * ```ts
+ * existSync("./readable_directory", { isReadable: true, isDirectory: true });
+ * //=> true
+ * 
+ * existSync("./not_readable_directory", { isReadable: true, isDirectory: true });
+ * //=> false
+ * ```
+ * @example Test the path whether is a readable file
+ * ```ts
+ * existSync("./readable_file", { isReadable: true, isFile: true });
+ * //=> true
+ * 
+ * existSync("./not_readable_file", { isReadable: true, isFile: true });
+ * //=> false
+ * ```
+ */
 export function existSync(path: string | URL, options: FSExistOptions = {}): boolean {
 	const {
 		isDirectory = false,
@@ -211,15 +211,15 @@ export function existSync(path: string | URL, options: FSExistOptions = {}): boo
 		throw new Error(`Parameters \`options.isDirectory\` and \`options.isFile\` are mutually exclusive!`);
 	}
 	try {
-		const entityStat: Deno.FileInfo = Deno.statSync(path);
+		const pathStat: Deno.FileInfo = Deno.statSync(path);
 		if (
-			(isDirectory && !entityStat.isDirectory) ||
-			(isFile && !entityStat.isFile)
+			(isDirectory && !pathStat.isDirectory) ||
+			(isFile && !pathStat.isFile)
 		) {
 			return false;
 		}
 		if (isReadable) {
-			return isEntityReadable(entityStat);
+			return isEntityReadable(pathStat);
 		}
 		return true;
 	} catch (error) {

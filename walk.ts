@@ -211,16 +211,16 @@ async function* walker(param: FSWalkerParameters, options: FSWalkOptionsInternal
 		const pathRelativeReal: string = getPathRelative(root, pathAbsoluteReal);
 		let isSymlinkDirectory: boolean;
 		let isSymlinkFile: boolean;
-		let infoReal: Deno.FileInfo | undefined;
+		let pathStat: Deno.FileInfo | undefined;
 		if (isSymlink) {
-			infoReal = await Deno.stat(pathAbsoluteReal);
-			isSymlinkDirectory = infoReal.isDirectory;
-			isSymlinkFile = infoReal.isFile;
+			pathStat = await Deno.stat(pathAbsoluteReal);
+			isSymlinkDirectory = pathStat.isDirectory;
+			isSymlinkFile = pathStat.isFile;
 		} else {
 			isSymlinkDirectory = false;
 			isSymlinkFile = false;
 		}
-		const entryMeta: FSWalkEntry = {
+		const result: FSWalkEntry = {
 			isDirectory,
 			isFile,
 			isSymlinkDirectory,
@@ -232,34 +232,34 @@ async function* walker(param: FSWalkerParameters, options: FSWalkOptionsInternal
 			pathRelativeReal,
 			viaSymlinkDirectory
 		};
-		if (isEntryYieldable(entryMeta, options)) {
+		if (isEntryYieldable(result, options)) {
 			if (extraInfo) {
-				if (typeof infoReal === "undefined") {
-					infoReal = await Deno.stat(pathAbsoluteReal);
+				if (typeof pathStat === "undefined") {
+					pathStat = await Deno.stat(pathAbsoluteReal);
 				}
 				yield {
-					...entryMeta,
-					atime: infoReal?.atime,
-					birthtime: infoReal?.birthtime,
-					blksize: infoReal?.blksize,
-					blocks: infoReal?.blocks,
-					ctime: infoReal?.ctime,
-					dev: infoReal?.dev,
-					gid: infoReal?.gid,
-					ino: infoReal?.ino,
-					isBlockDevice: infoReal?.isBlockDevice,
-					isCharDevice: infoReal?.isCharDevice,
-					isFifo: infoReal?.isFifo,
-					isSocket: infoReal?.isSocket,
-					mode: infoReal?.mode,
-					mtime: infoReal?.mtime,
-					nlink: infoReal?.nlink,
-					rdev: infoReal?.rdev,
-					size: infoReal?.size,
-					uid: infoReal?.uid
+					...result,
+					atime: pathStat?.atime,
+					birthtime: pathStat?.birthtime,
+					blksize: pathStat?.blksize,
+					blocks: pathStat?.blocks,
+					ctime: pathStat?.ctime,
+					dev: pathStat?.dev,
+					gid: pathStat?.gid,
+					ino: pathStat?.ino,
+					isBlockDevice: pathStat?.isBlockDevice,
+					isCharDevice: pathStat?.isCharDevice,
+					isFifo: pathStat?.isFifo,
+					isSocket: pathStat?.isSocket,
+					mode: pathStat?.mode,
+					mtime: pathStat?.mtime,
+					nlink: pathStat?.nlink,
+					rdev: pathStat?.rdev,
+					size: pathStat?.size,
+					uid: pathStat?.uid
 				};
 			} else {
-				yield entryMeta;
+				yield result;
 			}
 		}
 		if ((
@@ -299,16 +299,16 @@ function* walkerSync(param: FSWalkerParameters, options: FSWalkOptionsInternal):
 		const pathRelativeReal: string = getPathRelative(root, pathAbsoluteReal);
 		let isSymlinkDirectory: boolean;
 		let isSymlinkFile: boolean;
-		let infoReal: Deno.FileInfo | undefined;
+		let pathStat: Deno.FileInfo | undefined;
 		if (isSymlink) {
-			infoReal = Deno.statSync(pathAbsoluteReal);
-			isSymlinkDirectory = infoReal.isDirectory;
-			isSymlinkFile = infoReal.isFile;
+			pathStat = Deno.statSync(pathAbsoluteReal);
+			isSymlinkDirectory = pathStat.isDirectory;
+			isSymlinkFile = pathStat.isFile;
 		} else {
 			isSymlinkDirectory = false;
 			isSymlinkFile = false;
 		}
-		const entryMeta: FSWalkEntry = {
+		const result: FSWalkEntry = {
 			isDirectory,
 			isFile,
 			isSymlinkDirectory,
@@ -320,34 +320,34 @@ function* walkerSync(param: FSWalkerParameters, options: FSWalkOptionsInternal):
 			pathRelativeReal,
 			viaSymlinkDirectory
 		};
-		if (isEntryYieldable(entryMeta, options)) {
+		if (isEntryYieldable(result, options)) {
 			if (extraInfo) {
-				if (typeof infoReal === "undefined") {
-					infoReal = Deno.statSync(pathAbsoluteReal);
+				if (typeof pathStat === "undefined") {
+					pathStat = Deno.statSync(pathAbsoluteReal);
 				}
 				yield {
-					...entryMeta,
-					atime: infoReal?.atime,
-					birthtime: infoReal?.birthtime,
-					blksize: infoReal?.blksize,
-					blocks: infoReal?.blocks,
-					ctime: infoReal?.ctime,
-					dev: infoReal?.dev,
-					gid: infoReal?.gid,
-					ino: infoReal?.ino,
-					isBlockDevice: infoReal?.isBlockDevice,
-					isCharDevice: infoReal?.isCharDevice,
-					isFifo: infoReal?.isFifo,
-					isSocket: infoReal?.isSocket,
-					mode: infoReal?.mode,
-					mtime: infoReal?.mtime,
-					nlink: infoReal?.nlink,
-					rdev: infoReal?.rdev,
-					size: infoReal?.size,
-					uid: infoReal?.uid
+					...result,
+					atime: pathStat?.atime,
+					birthtime: pathStat?.birthtime,
+					blksize: pathStat?.blksize,
+					blocks: pathStat?.blocks,
+					ctime: pathStat?.ctime,
+					dev: pathStat?.dev,
+					gid: pathStat?.gid,
+					ino: pathStat?.ino,
+					isBlockDevice: pathStat?.isBlockDevice,
+					isCharDevice: pathStat?.isCharDevice,
+					isFifo: pathStat?.isFifo,
+					isSocket: pathStat?.isSocket,
+					mode: pathStat?.mode,
+					mtime: pathStat?.mtime,
+					nlink: pathStat?.nlink,
+					rdev: pathStat?.rdev,
+					size: pathStat?.size,
+					uid: pathStat?.uid
 				};
 			} else {
-				yield entryMeta;
+				yield result;
 			}
 		}
 		if ((
@@ -479,8 +479,8 @@ export async function walk(param0?: string | URL | FSWalkOptions, param1?: FSWal
 	const rootStatL: Deno.FileInfo = await Deno.lstat(root);
 	if (!rootStatL.isDirectory) {
 		if (rootStatL.isSymlink) {
-			const rootStatR: Deno.FileInfo = await Deno.stat(root);
-			if (!(rootStatR.isDirectory && options.walkSymlinkDirectories)) {
+			const rootStat: Deno.FileInfo = await Deno.stat(root);
+			if (!(rootStat.isDirectory && options.walkSymlinkDirectories)) {
 				throw new Error(`Path \`${root}\` is a symlink directory but forbid to walk!`);
 			}
 		} else {
@@ -555,8 +555,8 @@ export function walkSync(param0?: string | URL | FSWalkOptions, param1?: FSWalkO
 	const rootStatL: Deno.FileInfo = Deno.lstatSync(root);
 	if (!rootStatL.isDirectory) {
 		if (rootStatL.isSymlink) {
-			const rootStatR: Deno.FileInfo = Deno.statSync(root);
-			if (!(rootStatR.isDirectory && options.walkSymlinkDirectories)) {
+			const rootStat: Deno.FileInfo = Deno.statSync(root);
+			if (!(rootStat.isDirectory && options.walkSymlinkDirectories)) {
 				throw new Error(`Path \`${root}\` is a symlink directory but forbid to walk!`);
 			}
 		} else {

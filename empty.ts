@@ -24,8 +24,8 @@ import {
  */
 export async function emptyDir(path: string | URL): Promise<void> {
 	const pathFmt: string = (path instanceof URL) ? getPathFromFileUrl(path) : path;
-	await ensureDir(pathFmt);
-	const contents: Deno.DirEntry[] = await Array.fromAsync(Deno.readDir(pathFmt));
+	await ensureDir(path);
+	const contents: Deno.DirEntry[] = await Array.fromAsync(Deno.readDir(path));
 	const results: PromiseSettledResult<void>[] = await Promise.allSettled(contents.map(({ name }: Deno.DirEntry): Promise<void> => {
 		return Deno.remove(joinPath(pathFmt, name), { recursive: true });
 	}));
@@ -61,9 +61,9 @@ export {
  */
 export function emptyDirSync(path: string | URL): void {
 	const pathFmt: string = (path instanceof URL) ? getPathFromFileUrl(path) : path;
-	ensureDirSync(pathFmt);
+	ensureDirSync(path);
 	const fails: Error[] = [];
-	for (const { name } of Deno.readDirSync(pathFmt)) {
+	for (const { name } of Deno.readDirSync(path)) {
 		try {
 			Deno.removeSync(joinPath(pathFmt, name), { recursive: true });
 		} catch (error) {
