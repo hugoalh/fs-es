@@ -181,6 +181,29 @@ function isEntryYieldable(entry: FSWalkEntry, options: FSWalkOptionsInternal): b
 	}
 	return true;
 }
+function resolveEntryExtraInfo(basic: FSWalkEntry, extra: Deno.FileInfo): FSWalkEntryExtra {
+	return {
+		...basic,
+		atime: extra.atime,
+		birthtime: extra.birthtime,
+		blksize: extra.blksize,
+		blocks: extra.blocks,
+		ctime: extra.ctime,
+		dev: extra.dev,
+		gid: extra.gid,
+		ino: extra.ino,
+		isBlockDevice: extra.isBlockDevice,
+		isCharDevice: extra.isCharDevice,
+		isFifo: extra.isFifo,
+		isSocket: extra.isSocket,
+		mode: extra.mode,
+		mtime: extra.mtime,
+		nlink: extra.nlink,
+		rdev: extra.rdev,
+		size: extra.size,
+		uid: extra.uid
+	};
+}
 interface FSWalkerParameters {
 	depthCurrent?: number;
 	root: string;
@@ -213,7 +236,7 @@ async function* walker(param: FSWalkerParameters, options: FSWalkOptionsInternal
 		let isSymlinkFile: boolean;
 		let pathStat: Deno.FileInfo | undefined;
 		if (isSymlink) {
-			pathStat = await Deno.stat(pathAbsoluteReal);
+			pathStat ??= await Deno.stat(pathAbsoluteReal);
 			isSymlinkDirectory = pathStat.isDirectory;
 			isSymlinkFile = pathStat.isFile;
 		} else {
@@ -234,30 +257,8 @@ async function* walker(param: FSWalkerParameters, options: FSWalkOptionsInternal
 		};
 		if (isEntryYieldable(result, options)) {
 			if (extraInfo) {
-				if (typeof pathStat === "undefined") {
-					pathStat = await Deno.stat(pathAbsoluteReal);
-				}
-				yield {
-					...result,
-					atime: pathStat?.atime,
-					birthtime: pathStat?.birthtime,
-					blksize: pathStat?.blksize,
-					blocks: pathStat?.blocks,
-					ctime: pathStat?.ctime,
-					dev: pathStat?.dev,
-					gid: pathStat?.gid,
-					ino: pathStat?.ino,
-					isBlockDevice: pathStat?.isBlockDevice,
-					isCharDevice: pathStat?.isCharDevice,
-					isFifo: pathStat?.isFifo,
-					isSocket: pathStat?.isSocket,
-					mode: pathStat?.mode,
-					mtime: pathStat?.mtime,
-					nlink: pathStat?.nlink,
-					rdev: pathStat?.rdev,
-					size: pathStat?.size,
-					uid: pathStat?.uid
-				};
+				pathStat ??= await Deno.stat(pathAbsoluteReal);
+				yield resolveEntryExtraInfo(result, pathStat);
 			} else {
 				yield result;
 			}
@@ -301,7 +302,7 @@ function* walkerSync(param: FSWalkerParameters, options: FSWalkOptionsInternal):
 		let isSymlinkFile: boolean;
 		let pathStat: Deno.FileInfo | undefined;
 		if (isSymlink) {
-			pathStat = Deno.statSync(pathAbsoluteReal);
+			pathStat ??= Deno.statSync(pathAbsoluteReal);
 			isSymlinkDirectory = pathStat.isDirectory;
 			isSymlinkFile = pathStat.isFile;
 		} else {
@@ -322,30 +323,8 @@ function* walkerSync(param: FSWalkerParameters, options: FSWalkOptionsInternal):
 		};
 		if (isEntryYieldable(result, options)) {
 			if (extraInfo) {
-				if (typeof pathStat === "undefined") {
-					pathStat = Deno.statSync(pathAbsoluteReal);
-				}
-				yield {
-					...result,
-					atime: pathStat?.atime,
-					birthtime: pathStat?.birthtime,
-					blksize: pathStat?.blksize,
-					blocks: pathStat?.blocks,
-					ctime: pathStat?.ctime,
-					dev: pathStat?.dev,
-					gid: pathStat?.gid,
-					ino: pathStat?.ino,
-					isBlockDevice: pathStat?.isBlockDevice,
-					isCharDevice: pathStat?.isCharDevice,
-					isFifo: pathStat?.isFifo,
-					isSocket: pathStat?.isSocket,
-					mode: pathStat?.mode,
-					mtime: pathStat?.mtime,
-					nlink: pathStat?.nlink,
-					rdev: pathStat?.rdev,
-					size: pathStat?.size,
-					uid: pathStat?.uid
-				};
+				pathStat ??= Deno.statSync(pathAbsoluteReal);
+				yield resolveEntryExtraInfo(result, pathStat);
 			} else {
 				yield result;
 			}
