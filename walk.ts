@@ -71,7 +71,7 @@ export interface FSWalkOptions {
 	 * 
 	 * This property is only meaningful when properties {@linkcode includeFiles} or {@linkcode includeSymlinkFiles} are `true`.
 	 */
-	extensions?: string[];
+	extensions?: readonly string[];
 	/**
 	 * Whether to provide extra information of the entries.
 	 * @default {false}
@@ -102,13 +102,13 @@ export interface FSWalkOptions {
 	 * 
 	 * If specified, entries which match any of these regular expressions are included.
 	 */
-	matches?: RegExp[];
+	matches?: readonly RegExp[];
 	/**
 	 * Exclude entries by regular expressions.
 	 * 
 	 * If specified, entries which match any of these regular expressions are excluded.
 	 */
-	skips?: RegExp[];
+	skips?: readonly RegExp[];
 	/**
 	 * Whether symlink directory entries should be walked recursively like the real/regular directory entries.
 	 * 
@@ -207,7 +207,7 @@ function resolveEntryExtraInfo(basic: FSWalkEntry, extra: Deno.FileInfo): FSWalk
 interface FSWalkerParameters {
 	depthCurrent?: number;
 	root: string;
-	paths?: string[];
+	paths?: readonly string[];
 	viaSymlinkDirectory?: boolean;
 }
 async function* walker(param: FSWalkerParameters, options: FSWalkOptionsInternal): AsyncGenerator<FSWalkEntry | FSWalkEntryExtra> {
