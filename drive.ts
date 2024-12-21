@@ -4,11 +4,29 @@ import {
 	type JSONValue
 } from "https://raw.githubusercontent.com/hugoalh/is-json-es/v1.0.4/mod.ts";
 export interface FSDriveInfo {
+	/**
+	 * Description of the drive; Maybe empty.
+	 */
 	description: string;
+	/**
+	 * Free size of the drive, in bytes.
+	 */
 	free: bigint;
+	/**
+	 * Maximum size of the drive, in bytes.
+	 */
 	maximum: bigint;
+	/**
+	 * Name of the drive.
+	 */
 	name: string;
+	/**
+	 * Root of the drive.
+	 */
 	root: string;
+	/**
+	 * Used size of the drive, in bytes.
+	 */
 	used: bigint;
 	volumeSeparatedByColon: boolean;
 }
