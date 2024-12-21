@@ -1,4 +1,10 @@
 export {
+	getDriveInfo,
+	getDriveInfoSync,
+	type FSDriveInfo,
+	type FSGetDriveInfoOptions
+} from "./drive.ts";
+export {
 	emptyDir,
 	emptyDirectory,
 	emptyDirectorySync,

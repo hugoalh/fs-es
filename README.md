@@ -53,6 +53,8 @@ An ES (JavaScript & TypeScript) module for enhanced file system operation.
   - *Resources*
 - File System - Write \[Deno: `write`; NodeJS 🧪: `fs-write`\]
   - *Resources* (Optional)
+- Subprocesses \[Deno: `run`\]
+  - `pwsh` (Optional)
 - System Information \[Deno: `sys`\]
   - `gid` (Optional, POSIX/UNIX Platforms)
   - `uid` (Optional, POSIX/UNIX Platforms)
@@ -76,6 +78,9 @@ An ES (JavaScript & TypeScript) module for enhanced file system operation.
   ```
 - ```ts
   function exist(path: string | URL, options?: FSExistOptions): Promise<boolean>;
+  ```
+- ```ts
+  function getDriveInfo(options?: FSGetDriveInfoOptions): Promise<FSDriveInfo[]>;
   ```
 - ```ts
   function getSize(path?: string | URL): Promise<bigint>;

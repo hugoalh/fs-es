@@ -3,6 +3,7 @@
 	"name": "@hugoalh/fs",
 	"version": "0.2.0",
 	"exports": {
+		"./drive": "./drive.ts",
 		"./empty": "./empty.ts",
 		"./ensure": "./ensure.ts",
 		"./exist": "./exist.ts",
