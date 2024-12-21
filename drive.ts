@@ -56,20 +56,20 @@ function resolvePSDriveCommand(options: FSGetDriveInfoOptions = {}): Deno.Comman
 	}
 	args.push("-Command", `
 $ErrorActionPreference = 'Stop'
-[System.Management.Automation.PSDriveInfo[]]$Output = Get-PSDrive -PSProvider 'FileSystem'
-$Output |
+[PSCustomObject[]]$Output = Get-PSDrive -PSProvider 'FileSystem' |
 	Where-Object -FilterScript { $_.Name -inotin @('Temp') } |
 	ForEach-Object -Process {
 		[PSCustomObject]@{
 			description = $_.Description ?? '';
-			free = $_.Free.ToString()
+			free = ($_.Free ?? 0).ToString()
 			name = $_.Name
 			root = $_.Root
-			used = $_.Used.ToString()
+			used = ($_.Used ?? 0).ToString()
 			volumeSeparatedByColon = $_.VolumeSeparatedByColon
 		}
-	} |
-	ConvertTo-Json -Depth 100 |
+	}
+$Output |
+	ConvertTo-Json -Depth 100 -Compress |
 	Write-Host
 `);
 	return new Deno.Command(powershellPath, { args });
