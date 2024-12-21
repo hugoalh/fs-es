@@ -68,9 +68,17 @@ $ErrorActionPreference = 'Stop'
 			volumeSeparatedByColon = $_.VolumeSeparatedByColon
 		}
 	}
-$Output |
-	ConvertTo-Json -Depth 100 -Compress |
-	Write-Host
+[String]$Raw = $Output |
+	ConvertTo-Json -Depth 100 -Compress
+If ($Output.Count -eq 0) {
+	Write-Host -Object '[]'
+}
+ElseIf ($Output.Count -eq 1) {
+	Write-Host -Object "[$($Raw)]"
+}
+Else {
+	Write-Host -Object $Raw
+}
 `);
 	return new Deno.Command(powershellPath, { args });
 }
