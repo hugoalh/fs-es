@@ -38,7 +38,7 @@ function resolvePSDriveCommand(options: FSGetDriveInfoOptions = {}): Deno.Comman
 	}
 	args.push("-Command", `
 $ErrorActionPreference = 'Stop'
-[PSDriveInfo[]]$Output = Get-PSDrive -PSProvider 'FileSystem'
+[System.Management.Automation.PSDriveInfo[]]$Output = Get-PSDrive -PSProvider 'FileSystem'
 $Output |
 	Where-Object -FilterScript { $_.Name -inotin @('Temp') } |
 	ForEach-Object -Process {
