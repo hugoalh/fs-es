@@ -21,7 +21,7 @@ export interface FSDriveInfo {
 	 */
 	name: string;
 	/**
-	 * Root of the drive.
+	 * Root path of the drive.
 	 */
 	root: string;
 	/**
