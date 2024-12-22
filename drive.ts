@@ -32,30 +32,21 @@ export interface FSDriveInfo {
 }
 export interface FSGetDriveInfoOptions {
 	/**
-	 * Filter the result with match these names or name of the drives.
-	 * 
-	 * Type the drive name or letter without a colon (`:`).
-	 */
-	name?: string | readonly string[];
-	/**
 	 * Specify the path of the PowerShell executable. By default, this looks for `pwsh` in the environment variable `PATH`.
-	 * 
-	 * Also accept these values:
-	 * 
-	 * - `"powershell"`
-	 * - `"pwsh"`
-	 * @default {"pwsh"}
 	 */
 	powershellPath?: string | URL;
 }
 function resolvePSDriveCommand(options: FSGetDriveInfoOptions = {}): Deno.Command {
 	const { powershellPath = "pwsh" }: FSGetDriveInfoOptions = options;
-	const args: string[] = ["-NoLogo", "-NonInteractive", "-NoProfileLoadTime"];
+	const args: string[] = ["-NoLogo", "-NonInteractive", "-NoProfile", "-NoProfileLoadTime"];
 	if (Deno.build.os === "windows") {
 		args.push("-WindowStyle", "Hidden");
 	}
 	args.push("-Command", `
+#Requires -PSEdition Core
 $ErrorActionPreference = 'Stop'
+$ProgressPreference = 'SilentlyContinue'
+$WarningPreference = 'SilentlyContinue'
 [PSCustomObject[]]$Output = Get-PSDrive -PSProvider 'FileSystem' |
 	Where-Object -FilterScript { $_.Name -inotin @('Temp') } |
 	ForEach-Object -Process {
@@ -100,29 +91,29 @@ function resolvePSDriveInfo(commandOutput: Deno.CommandOutput): FSDriveInfo[] {
 		throw new Error(`Unable to get the drive info: ${error}`);
 	}
 	if (!isJSONArray(raw)) {
-		throw new Error(`Unable to get the drive info: Invalid command output.`);
+		throw new Error(`Unable to get the drive info: Invalid subprocess output.`);
 	}
 	return raw.map((entity: JSONValue, index: number): FSDriveInfo => {
 		if (!isJSONObject(entity)) {
-			throw new Error(`Unable to get the drive info: Invalid command output \`[${index}]\`.`);
+			throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}]\`.`);
 		}
 		if (typeof entity.description !== "string") {
-			throw new Error(`Unable to get the drive info: Invalid command output \`[${index}].description\`.`);
+			throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].description\`.`);
 		}
 		if (typeof entity.free !== "string") {
-			throw new Error(`Unable to get the drive info: Invalid command output \`[${index}].free\`.`);
+			throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].free\`.`);
 		}
 		if (typeof entity.name !== "string") {
-			throw new Error(`Unable to get the drive info: Invalid command output \`[${index}].name\`.`);
+			throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].name\`.`);
 		}
 		if (typeof entity.root !== "string") {
-			throw new Error(`Unable to get the drive info: Invalid command output \`[${index}].root\`.`);
+			throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].root\`.`);
 		}
 		if (typeof entity.used !== "string") {
-			throw new Error(`Unable to get the drive info: Invalid command output \`[${index}].used\`.`);
+			throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].used\`.`);
 		}
 		if (typeof entity.volumeSeparatedByColon !== "boolean") {
-			throw new Error(`Unable to get the drive info: Invalid command output \`[${index}].volumeSeparatedByColon\`.`);
+			throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].volumeSeparatedByColon\`.`);
 		}
 		const free: bigint = BigInt(entity.free);
 		const used: bigint = BigInt(entity.used);
