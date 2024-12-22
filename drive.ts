@@ -28,6 +28,9 @@ export interface FSDriveInfo {
 	 * Used size of the drive, in bytes.
 	 */
 	used: bigint;
+	/**
+	 * Whether the drive root relative paths on this drive are separated by a colon. This is `true` on all of the platforms except for file systems on non Windows platforms.
+	 */
 	volumeSeparatedByColon: boolean;
 }
 export interface FSGetDriveInfoOptions {
