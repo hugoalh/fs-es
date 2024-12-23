@@ -3,6 +3,7 @@
 	"name": "@hugoalh/fs",
 	"version": "0.2.0",
 	"exports": {
+		"./drive": "./drive.ts",
 		"./empty": "./empty.ts",
 		"./ensure": "./ensure.ts",
 		"./exist": "./exist.ts",
@@ -11,6 +12,7 @@
 		".": "./mod.ts"
 	},
 	"imports": {
+		"https://raw.githubusercontent.com/hugoalh/is-json-es/v1.0.4/mod.ts": "jsr:@hugoalh/is-json@^1.0.4"
 	},
 	"publish": {
 		"exclude": [
