@@ -50,29 +50,21 @@ function resolvePSDriveCommand(options: FSGetDriveInfoOptions = {}): Deno.Comman
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 $WarningPreference = 'SilentlyContinue'
-[PSCustomObject[]]$Output = Get-PSDrive -PSProvider 'FileSystem' |
-	Where-Object -FilterScript { $_.Name -inotin @('Temp') } |
-	ForEach-Object -Process {
-		[PSCustomObject]@{
-			description = $_.Description ?? '';
-			free = ($_.Free ?? 0).ToString()
-			name = $_.Name
-			root = $_.Root
-			used = ($_.Used ?? 0).ToString()
-			volumeSeparatedByColon = $_.VolumeSeparatedByColon
-		}
+[PSCustomObject[]]$Result = @()
+ForEach ($Drive In (Get-PSDrive -PSProvider 'FileSystem')) {
+	If ($Drive.Name -iin @('Temp')) {
+		Continue
 	}
-[String]$Raw = $Output |
-	ConvertTo-Json -Depth 100 -Compress
-If ($Output.Count -eq 0) {
-	Write-Host -Object '[]'
+	$Result += [PSCustomObject]@{
+		description = $Drive.Description ?? '';
+		free = ($Drive.Free ?? 0).ToString()
+		name = $Drive.Name
+		root = $Drive.Root
+		used = ($Drive.Used ?? 0).ToString()
+		volumeSeparatedByColon = $Drive.VolumeSeparatedByColon
+	}
 }
-ElseIf ($Output.Count -eq 1) {
-	Write-Host -Object "[$($Raw)]"
-}
-Else {
-	Write-Host -Object $Raw
-}
+Write-Host -Object (ConvertTo-Json -InputObject $Result -Depth 100 -Compress)
 `);
 	return new Deno.Command(powershellPath, { args });
 }
