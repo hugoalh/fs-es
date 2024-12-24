@@ -230,16 +230,19 @@ async function* walker(param: FSWalkerParameters, options: FSWalkOptionsInternal
 	} of Deno.readDir(joinPath(root, ...paths))) {
 		const pathRelative: string = joinPath(...paths, name);
 		const pathAbsolute: string = joinPath(root, pathRelative);
-		const pathAbsoluteReal: string = await Deno.realPath(pathAbsolute);
-		const pathRelativeReal: string = getPathRelative(root, pathAbsoluteReal);
 		let isSymlinkDirectory: boolean;
 		let isSymlinkFile: boolean;
-		let pathStat: Deno.FileInfo | undefined;
+		let pathAbsoluteReal: string;
+		let pathRelativeReal: string;
 		if (isSymlink) {
-			pathStat ??= await Deno.stat(pathAbsoluteReal);
-			isSymlinkDirectory = pathStat.isDirectory;
-			isSymlinkFile = pathStat.isFile;
+			pathAbsoluteReal = await Deno.readLink(pathAbsolute);
+			pathRelativeReal = getPathRelative(root, pathAbsoluteReal);
+			const pathStatL: Deno.FileInfo = await Deno.lstat(pathAbsoluteReal);
+			isSymlinkDirectory = pathStatL.isDirectory;
+			isSymlinkFile = pathStatL.isFile;
 		} else {
+			pathAbsoluteReal = await Deno.realPath(pathAbsolute);
+			pathRelativeReal = getPathRelative(root, pathAbsoluteReal);
 			isSymlinkDirectory = false;
 			isSymlinkFile = false;
 		}
@@ -256,12 +259,7 @@ async function* walker(param: FSWalkerParameters, options: FSWalkOptionsInternal
 			viaSymlinkDirectory
 		};
 		if (isEntryYieldable(result, options)) {
-			if (extraInfo) {
-				pathStat ??= await Deno.stat(pathAbsoluteReal);
-				yield resolveEntryExtraInfo(result, pathStat);
-			} else {
-				yield result;
-			}
+			yield (extraInfo ? resolveEntryExtraInfo(result, await Deno.lstat(pathAbsolute)) : result);
 		}
 		if ((
 			isDirectory ||
@@ -296,16 +294,19 @@ function* walkerSync(param: FSWalkerParameters, options: FSWalkOptionsInternal):
 	} of Deno.readDirSync(joinPath(root, ...paths))) {
 		const pathRelative: string = joinPath(...paths, name);
 		const pathAbsolute: string = joinPath(root, pathRelative);
-		const pathAbsoluteReal: string = Deno.realPathSync(pathAbsolute);
-		const pathRelativeReal: string = getPathRelative(root, pathAbsoluteReal);
 		let isSymlinkDirectory: boolean;
 		let isSymlinkFile: boolean;
-		let pathStat: Deno.FileInfo | undefined;
+		let pathAbsoluteReal: string;
+		let pathRelativeReal: string;
 		if (isSymlink) {
-			pathStat ??= Deno.statSync(pathAbsoluteReal);
-			isSymlinkDirectory = pathStat.isDirectory;
-			isSymlinkFile = pathStat.isFile;
+			pathAbsoluteReal = Deno.readLinkSync(pathAbsolute);
+			pathRelativeReal = getPathRelative(root, pathAbsoluteReal);
+			const pathStatL: Deno.FileInfo = Deno.lstatSync(pathAbsoluteReal);
+			isSymlinkDirectory = pathStatL.isDirectory;
+			isSymlinkFile = pathStatL.isFile;
 		} else {
+			pathAbsoluteReal = Deno.realPathSync(pathAbsolute);
+			pathRelativeReal = getPathRelative(root, pathAbsoluteReal);
 			isSymlinkDirectory = false;
 			isSymlinkFile = false;
 		}
@@ -322,12 +323,7 @@ function* walkerSync(param: FSWalkerParameters, options: FSWalkOptionsInternal):
 			viaSymlinkDirectory
 		};
 		if (isEntryYieldable(result, options)) {
-			if (extraInfo) {
-				pathStat ??= Deno.statSync(pathAbsoluteReal);
-				yield resolveEntryExtraInfo(result, pathStat);
-			} else {
-				yield result;
-			}
+			yield (extraInfo ? resolveEntryExtraInfo(result, Deno.lstatSync(pathAbsolute)) : result);
 		}
 		if ((
 			isDirectory ||
