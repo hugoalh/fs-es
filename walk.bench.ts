@@ -8,6 +8,7 @@ Deno.bench("Async", {
 	}
 }, async () => {
 	await Array.fromAsync(await walk(Deno.cwd(), {
+		extraInfo: true,
 		skips: [
 			/^\.git[\\\/]/
 		]
@@ -19,6 +20,7 @@ Deno.bench("Sync", {
 	}
 }, () => {
 	Array.from(walkSync(Deno.cwd(), {
+		extraInfo: true,
 		skips: [
 			/^\.git[\\\/]/
 		]
