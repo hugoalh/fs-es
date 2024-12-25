@@ -230,19 +230,15 @@ async function* walker(param: FSWalkerParameters, options: FSWalkOptionsInternal
 	} of Deno.readDir(joinPath(root, ...paths))) {
 		const pathRelative: string = joinPath(...paths, name);
 		const pathAbsolute: string = joinPath(root, pathRelative);
+		const pathAbsoluteReal: string = await Deno.realPath(pathAbsolute);
+		const pathRelativeReal: string = getPathRelative(root, pathAbsoluteReal);
 		let isSymlinkDirectory: boolean;
 		let isSymlinkFile: boolean;
-		let pathAbsoluteReal: string;
-		let pathRelativeReal: string;
 		if (isSymlink) {
-			pathAbsoluteReal = await Deno.readLink(pathAbsolute);
-			pathRelativeReal = getPathRelative(root, pathAbsoluteReal);
 			const pathStat: Deno.FileInfo = await Deno.lstat(pathAbsoluteReal);
 			isSymlinkDirectory = pathStat.isDirectory;
 			isSymlinkFile = pathStat.isFile;
 		} else {
-			pathAbsoluteReal = await Deno.realPath(pathAbsolute);
-			pathRelativeReal = getPathRelative(root, pathAbsoluteReal);
 			isSymlinkDirectory = false;
 			isSymlinkFile = false;
 		}
@@ -294,19 +290,15 @@ function* walkerSync(param: FSWalkerParameters, options: FSWalkOptionsInternal):
 	} of Deno.readDirSync(joinPath(root, ...paths))) {
 		const pathRelative: string = joinPath(...paths, name);
 		const pathAbsolute: string = joinPath(root, pathRelative);
+		const pathAbsoluteReal: string = Deno.realPathSync(pathAbsolute);
+		const pathRelativeReal: string = getPathRelative(root, pathAbsoluteReal);
 		let isSymlinkDirectory: boolean;
 		let isSymlinkFile: boolean;
-		let pathAbsoluteReal: string;
-		let pathRelativeReal: string;
 		if (isSymlink) {
-			pathAbsoluteReal = Deno.readLinkSync(pathAbsolute);
-			pathRelativeReal = getPathRelative(root, pathAbsoluteReal);
 			const pathStat: Deno.FileInfo = Deno.lstatSync(pathAbsoluteReal);
 			isSymlinkDirectory = pathStat.isDirectory;
 			isSymlinkFile = pathStat.isFile;
 		} else {
-			pathAbsoluteReal = Deno.realPathSync(pathAbsolute);
-			pathRelativeReal = getPathRelative(root, pathAbsoluteReal);
 			isSymlinkDirectory = false;
 			isSymlinkFile = false;
 		}
