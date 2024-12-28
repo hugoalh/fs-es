@@ -36,6 +36,7 @@ export interface FSDriveInfo {
 export interface FSGetDriveInfoOptions {
 	/**
 	 * Specify the path of the PowerShell executable. By default, this looks for `pwsh` in the environment variable `PATH`.
+	 * @default {"pwsh"}
 	 */
 	powershellPath?: string | URL;
 }
