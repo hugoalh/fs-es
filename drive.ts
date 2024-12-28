@@ -96,33 +96,17 @@ function resolvePSDriveInfo(commandOutput: Deno.CommandOutput): FSDriveInfo[] {
 		for (const key of Object.keys(entity)) {
 			switch (key) {
 				case "description":
-					if (typeof entity.description !== "string") {
-						throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].description\`.`);
-					}
-					break;
 				case "free":
-					if (typeof entity.free !== "string") {
-						throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].free\`.`);
-					}
-					break;
 				case "name":
-					if (typeof entity.name !== "string") {
-						throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].name\`.`);
-					}
-					break;
 				case "root":
-					if (typeof entity.root !== "string") {
-						throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].root\`.`);
-					}
-					break;
 				case "used":
-					if (typeof entity.used !== "string") {
-						throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].used\`.`);
+					if (typeof entity[key] !== "string") {
+						throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].${key}\`.`);
 					}
 					break;
 				case "volumeSeparatedByColon":
-					if (typeof entity.volumeSeparatedByColon !== "boolean") {
-						throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].volumeSeparatedByColon\`.`);
+					if (typeof entity[key] !== "boolean") {
+						throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].${key}\`.`);
 					}
 					break;
 				default:
