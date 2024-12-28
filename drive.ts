@@ -92,34 +92,52 @@ function resolvePSDriveInfo(commandOutput: Deno.CommandOutput): FSDriveInfo[] {
 		if (!isJSONObject(entity)) {
 			throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}]\`.`);
 		}
-		if (typeof entity.description !== "string") {
-			throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].description\`.`);
+		for (const key of Object.keys(entity)) {
+			switch (key) {
+				case "description":
+					if (typeof entity.description !== "string") {
+						throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].description\`.`);
+					}
+					break;
+				case "free":
+					if (typeof entity.free !== "string") {
+						throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].free\`.`);
+					}
+					break;
+				case "name":
+					if (typeof entity.name !== "string") {
+						throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].name\`.`);
+					}
+					break;
+				case "root":
+					if (typeof entity.root !== "string") {
+						throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].root\`.`);
+					}
+					break;
+				case "used":
+					if (typeof entity.used !== "string") {
+						throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].used\`.`);
+					}
+					break;
+				case "volumeSeparatedByColon":
+					if (typeof entity.volumeSeparatedByColon !== "boolean") {
+						throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].volumeSeparatedByColon\`.`);
+					}
+					break;
+				default:
+					throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].${key}\`.`);
+			}
 		}
-		if (typeof entity.free !== "string") {
-			throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].free\`.`);
-		}
-		if (typeof entity.name !== "string") {
-			throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].name\`.`);
-		}
-		if (typeof entity.root !== "string") {
-			throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].root\`.`);
-		}
-		if (typeof entity.used !== "string") {
-			throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].used\`.`);
-		}
-		if (typeof entity.volumeSeparatedByColon !== "boolean") {
-			throw new Error(`Unable to get the drive info: Invalid subprocess output \`[${index}].volumeSeparatedByColon\`.`);
-		}
-		const free: bigint = BigInt(entity.free);
-		const used: bigint = BigInt(entity.used);
+		const free: bigint = BigInt(entity.free as string);
+		const used: bigint = BigInt(entity.used as string);
 		return {
-			description: entity.description,
+			description: entity.description as string,
 			free,
 			maximum: free + used,
-			name: entity.name,
-			root: entity.root,
+			name: entity.name as string,
+			root: entity.root as string,
 			used,
-			volumeSeparatedByColon: entity.volumeSeparatedByColon
+			volumeSeparatedByColon: entity.volumeSeparatedByColon as boolean
 		};
 	});
 }
