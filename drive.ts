@@ -57,7 +57,7 @@ ForEach ($Drive In (Get-PSDrive -PSProvider 'FileSystem')) {
 		Continue
 	}
 	$Result += [PSCustomObject]@{
-		description = $Drive.Description ?? '';
+		description = $Drive.Description ?? ''
 		free = ($Drive.Free ?? 0).ToString()
 		name = $Drive.Name
 		root = $Drive.Root
