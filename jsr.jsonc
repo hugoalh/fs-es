@@ -8,6 +8,7 @@
 		"./ensure": "./ensure.ts",
 		"./exist": "./exist.ts",
 		"./size": "./size.ts",
+		"./stream": "./stream.ts",
 		"./walk": "./walk.ts",
 		".": "./mod.ts"
 	},

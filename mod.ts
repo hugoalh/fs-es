@@ -32,6 +32,11 @@ export {
 	getSizeSync
 } from "./size.ts";
 export {
+	readFileAsChunks,
+	readFileAsChunksSync,
+	type FSReadFileAsChunksOptions
+} from "./stream.ts";
+export {
 	walk,
 	walkSync,
 	type FSWalkEntry,
