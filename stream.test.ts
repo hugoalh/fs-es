@@ -1,59 +1,72 @@
-import { readFileAsChunksSync } from "./stream.ts";
+import { assertEquals } from "STD/assert/equals";
+import { readFileAsChunks } from "./stream.ts";
 Deno.test("ReadFileAsChunks 64 Standard", {
 	permissions: {
 		read: true
 	}
-}, () => {
-	let bytes = 0n;
-	let chunks = 0n;
-	for (const chunk of readFileAsChunksSync("./README.md", { chunkSize: 64 })) {
-		bytes += BigInt(chunk.length);
-		chunks += 1n;
+}, async () => {
+	const filePath = "./README.md";
+	const bytesExpected = (await Deno.stat(filePath)).size;
+	let bytes = 0;
+	let chunks = 0;
+	for await (const chunk of readFileAsChunks(filePath, { chunkSize: 64 })) {
+		bytes += chunk.length;
+		chunks += 1;
 	}
-	console.debug(`Bytes: ${bytes}; Chunks: ${chunks}`);
+	assertEquals(bytes, bytesExpected);
+	console.debug(`Chunks: ${chunks}`);
 });
 Deno.test("ReadFileAsChunks 64 Reduce", {
 	permissions: {
 		read: true
 	}
-}, () => {
-	let bytes = 0n;
-	let chunks = 0n;
-	for (const chunk of readFileAsChunksSync("./README.md", {
+}, async () => {
+	const filePath = "./README.md";
+	const bytesExpected = (await Deno.stat(filePath)).size;
+	let bytes = 0;
+	let chunks = 0;
+	for await (const chunk of readFileAsChunks(filePath, {
 		chunkSize: 64,
 		reduceChunks: true
 	})) {
-		bytes += BigInt(chunk.length);
-		chunks += 1n;
+		bytes += chunk.length;
+		chunks += 1;
 	}
-	console.debug(`Bytes: ${bytes}; Chunks: ${chunks}`);
+	assertEquals(bytes, bytesExpected);
+	console.debug(`Chunks: ${chunks}`);
 });
 Deno.test("ReadFileAsChunks 1024 Standard", {
 	permissions: {
 		read: true
 	}
-}, () => {
-	let bytes = 0n;
-	let chunks = 0n;
-	for (const chunk of readFileAsChunksSync("./README.md", { chunkSize: 1024 })) {
-		bytes += BigInt(chunk.length);
-		chunks += 1n;
+}, async () => {
+	const filePath = "./README.md";
+	const bytesExpected = (await Deno.stat(filePath)).size;
+	let bytes = 0;
+	let chunks = 0;
+	for await (const chunk of readFileAsChunks(filePath, { chunkSize: 1024 })) {
+		bytes += chunk.length;
+		chunks += 1;
 	}
-	console.debug(`Bytes: ${bytes}; Chunks: ${chunks}`);
+	assertEquals(bytes, bytesExpected);
+	console.debug(`Chunks: ${chunks}`);
 });
 Deno.test("ReadFileAsChunks 1024 Reduce", {
 	permissions: {
 		read: true
 	}
-}, () => {
-	let bytes = 0n;
-	let chunks = 0n;
-	for (const chunk of readFileAsChunksSync("./README.md", {
+}, async () => {
+	const filePath = "./README.md";
+	const bytesExpected = (await Deno.stat(filePath)).size;
+	let bytes = 0;
+	let chunks = 0;
+	for await (const chunk of readFileAsChunks(filePath, {
 		chunkSize: 1024,
 		reduceChunks: true
 	})) {
-		bytes += BigInt(chunk.length);
-		chunks += 1n;
+		bytes += chunk.length;
+		chunks += 1;
 	}
-	console.debug(`Bytes: ${bytes}; Chunks: ${chunks}`);
+	assertEquals(bytes, bytesExpected);
+	console.debug(`Chunks: ${chunks}`);
 });
