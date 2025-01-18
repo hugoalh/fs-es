@@ -11,9 +11,19 @@ await invokeDenoNodeJSTransformer({
 	entrypoints: configJSR.getExports(),
 	generateDeclarationMap: true,
 	mappings: {
+		"https://raw.githubusercontent.com/hugoalh/fnv-es/v0.1.0/1a.ts": {
+			name: "@hugoalh/fnv",
+			version: "^0.1.0",
+			subPath: "1a"
+		},
 		"https://raw.githubusercontent.com/hugoalh/is-json-es/v1.0.4/mod.ts": {
 			name: "@hugoalh/is-json",
 			version: "^1.0.4"
+		},
+		"https://raw.githubusercontent.com/hugoalh/sort-es/v0.1.1/collection.ts": {
+			name: "@hugoalh/sort",
+			version: "^0.1.1",
+			subPath: "collection"
 		}
 	},
 	metadata: {
