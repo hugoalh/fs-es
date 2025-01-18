@@ -7,12 +7,12 @@ Deno.bench("Async", {
 		read: [Deno.cwd()]
 	}
 }, async () => {
-	await getSize();
+	await getSize(Deno.cwd());
 });
 Deno.bench("Sync", {
 	permissions: {
 		read: [Deno.cwd()]
 	}
 }, () => {
-	getSizeSync();
+	getSizeSync(Deno.cwd());
 });

@@ -365,24 +365,6 @@ function resolveWalkOptions(options: FSWalkOptions): FSWalkOptionsInternal {
 		walkSymlinkDirectories
 	};
 }
-function resolveWalkParameters(param0: string | URL | FSWalkOptions | undefined, param1: FSWalkOptions | undefined) {
-	let rootRaw: string | URL;
-	let optionsRaw: FSWalkOptions | undefined;
-	if (
-		typeof param0 === "string" ||
-		param0 instanceof URL
-	) {
-		rootRaw = param0;
-		optionsRaw = param1;
-	} else {
-		rootRaw = Deno.cwd();
-		optionsRaw = param0;
-	}
-	return {
-		options: resolveWalkOptions(optionsRaw ?? {}),
-		root: resolveRootPath(rootRaw)
-	};
-}
 /**
  * Walk through the directory and yield information about each entry encountered, asynchronously.
  * 
@@ -398,19 +380,6 @@ function resolveWalkParameters(param0: string | URL | FSWalkOptions | undefined,
  */
 export async function walk(root: string | URL, options?: FSWalkOptions & { extraInfo?: false; }): Promise<AsyncGenerator<FSWalkEntry>>;
 /**
- * Walk through the directory and yield information about each entry encountered, asynchronously.
- * 
- * The order of entries is not guaranteed.
- * 
- * > **🛡️ Runtime Permissions**
- * >
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
- * >   - *Resources*
- * @param {FSWalkOptions & { extraInfo?: false; }} [options] Options.
- * @returns {Promise<AsyncGenerator<FSWalkEntry>>} An async iterable iterator that yields the walk entry information.
- */
-export async function walk(options?: FSWalkOptions & { extraInfo?: false; }): Promise<AsyncGenerator<FSWalkEntry>>;
-/**
 /**
  * Walk through the directory and yield information about each entry encountered, asynchronously.
  * 
@@ -425,39 +394,24 @@ export async function walk(options?: FSWalkOptions & { extraInfo?: false; }): Pr
  * @returns {Promise<AsyncGenerator<FSWalkEntryExtra>>} An async iterable iterator that yields the walk entry information.
  */
 export async function walk(root: string | URL, options: FSWalkOptions & { extraInfo: true; }): Promise<AsyncGenerator<FSWalkEntryExtra>>;
-/**
- * Walk through the directory and yield information about each entry encountered, asynchronously.
- * 
- * The order of entries is not guaranteed.
- * 
- * > **🛡️ Runtime Permissions**
- * >
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
- * >   - *Resources*
- * @param {FSWalkOptions & { extraInfo: true; }} options Options.
- * @returns {Promise<AsyncGenerator<FSWalkEntryExtra>>} An async iterable iterator that yields the walk entry information.
- */
-export async function walk(options: FSWalkOptions & { extraInfo: true; }): Promise<AsyncGenerator<FSWalkEntryExtra>>;
-export async function walk(param0?: string | URL | FSWalkOptions, param1?: FSWalkOptions): Promise<AsyncGenerator<FSWalkEntry | FSWalkEntryExtra>> {
-	const {
-		options,
-		root
-	} = resolveWalkParameters(param0, param1);
+export async function walk(root: string | URL, options: FSWalkOptions = {}): Promise<AsyncGenerator<FSWalkEntry | FSWalkEntryExtra>> {
+	const rootFmt: string = resolveRootPath(root);
+	const optionsFmt: FSWalkOptionsInternal = resolveWalkOptions(options);
 	const rootStatL: Deno.FileInfo = await Deno.lstat(root);
 	if (!rootStatL.isDirectory) {
 		if (rootStatL.isSymlink) {
 			const rootStat: Deno.FileInfo = await Deno.stat(root);
 			if (!(rootStat.isDirectory && options.walkSymlinkDirectories)) {
-				throw new Error(`Path \`${root}\` is a symlink directory but forbid to walk!`);
+				throw new Error(`Path \`${rootFmt}\` is a symlink directory but forbid to walk!`);
 			}
 		} else {
-			throw new Deno.errors.NotADirectory(`Path \`${root}\` is not a directory!`);
+			throw new Deno.errors.NotADirectory(`Path \`${rootFmt}\` is not a directory!`);
 		}
 	}
 	return walker({
-		root,
+		root: rootFmt,
 		viaSymlinkDirectory: !rootStatL.isDirectory
-	}, options);
+	}, optionsFmt);
 }
 /**
  * Walk through the directory and yield information about each entry encountered, synchronously.
@@ -474,19 +428,6 @@ export async function walk(param0?: string | URL | FSWalkOptions, param1?: FSWal
  */
 export function walkSync(root: string | URL, options?: FSWalkOptions & { extraInfo?: false; }): Generator<FSWalkEntry>;
 /**
- * Walk through the directory and yield information about each entry encountered, synchronously.
- * 
- * The order of entries is not guaranteed.
- * 
- * > **🛡️ Runtime Permissions**
- * >
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
- * >   - *Resources*
- * @param {FSWalkOptions & { extraInfo?: false; }} [options] Options.
- * @returns {Generator<FSWalkEntry>} A sync iterable iterator that yields the walk entry information.
- */
-export function walkSync(options?: FSWalkOptions & { extraInfo?: false; }): Generator<FSWalkEntry>;
-/**
 /**
  * Walk through the directory and yield information about each entry encountered, synchronously.
  * 
@@ -501,37 +442,22 @@ export function walkSync(options?: FSWalkOptions & { extraInfo?: false; }): Gene
  * @returns {Generator<FSWalkEntryExtra>} A sync iterable iterator that yields the walk entry information.
  */
 export function walkSync(root: string | URL, options: FSWalkOptions & { extraInfo: true; }): Generator<FSWalkEntryExtra>;
-/**
- * Walk through the directory and yield information about each entry encountered, synchronously.
- * 
- * The order of entries is not guaranteed.
- * 
- * > **🛡️ Runtime Permissions**
- * >
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
- * >   - *Resources*
- * @param {FSWalkOptions & { extraInfo: true; }} options Options.
- * @returns {Generator<FSWalkEntryExtra>} A sync iterable iterator that yields the walk entry information.
- */
-export function walkSync(options: FSWalkOptions & { extraInfo: true; }): Generator<FSWalkEntryExtra>;
-export function walkSync(param0?: string | URL | FSWalkOptions, param1?: FSWalkOptions): Generator<FSWalkEntry | FSWalkEntryExtra> {
-	const {
-		options,
-		root
-	} = resolveWalkParameters(param0, param1);
+export function walkSync(root: string | URL, options: FSWalkOptions = {}): Generator<FSWalkEntry | FSWalkEntryExtra> {
+	const rootFmt: string = resolveRootPath(root);
+	const optionsFmt: FSWalkOptionsInternal = resolveWalkOptions(options);
 	const rootStatL: Deno.FileInfo = Deno.lstatSync(root);
 	if (!rootStatL.isDirectory) {
 		if (rootStatL.isSymlink) {
 			const rootStat: Deno.FileInfo = Deno.statSync(root);
 			if (!(rootStat.isDirectory && options.walkSymlinkDirectories)) {
-				throw new Error(`Path \`${root}\` is a symlink directory but forbid to walk!`);
+				throw new Error(`Path \`${rootFmt}\` is a symlink directory but forbid to walk!`);
 			}
 		} else {
-			throw new Deno.errors.NotADirectory(`Path \`${root}\` is not a directory!`);
+			throw new Deno.errors.NotADirectory(`Path \`${rootFmt}\` is not a directory!`);
 		}
 	}
 	return walkerSync({
-		root,
+		root: rootFmt,
 		viaSymlinkDirectory: !rootStatL.isDirectory
-	}, options);
+	}, optionsFmt);
 }

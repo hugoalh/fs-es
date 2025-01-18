@@ -4,5 +4,5 @@ Deno.test("Main", {
 		read: [Deno.cwd()]
 	}
 }, async () => {
-	console.log(await getSize());
+	console.log(await getSize(Deno.cwd()));
 });
