@@ -3,11 +3,11 @@ import { sortCollectionByKeys } from "https://raw.githubusercontent.com/hugoalh/
 import { walk } from "./walk.ts";
 async function getFileHash(path: string | URL): Promise<string> {
 	using file: Deno.FsFile = await Deno.open(path);
-	return (await FNV1a.fromStream(256, file.readable)).hashHexPadding();
+	return (await FNV1a.fromStream(512, file.readable)).hashHexPadding();
 }
 async function getSymlinkHash(path: string | URL): Promise<string> {
 	const link: string = await Deno.readLink(path);
-	return new FNV1a(256, link).hashHexPadding();
+	return new FNV1a(512, link).hashHexPadding();
 }
 async function getDirectoryHash(path: string | URL): Promise<string> {
 	const bin: Map<string, string> = new Map<string, string>();
@@ -23,7 +23,7 @@ async function getDirectoryHash(path: string | URL): Promise<string> {
 			throw new ReferenceError(`Path \`${pathRelative}\` of the root \`${path}\` process again, last result is \`${bin.get(pathRelative)}\`!`);
 		}
 		if (isDirectory) {
-			bin.set(pathRelative, "-".repeat(64));
+			bin.set(pathRelative, "-".repeat(128));
 		} else if (isFile) {
 			bin.set(pathRelative, await getFileHash(pathAbsolute));
 		} else if (
@@ -38,7 +38,7 @@ async function getDirectoryHash(path: string | URL): Promise<string> {
 	const raw: string = Array.from(sortCollectionByKeys(bin).entries(), ([key, value]: [string, string]): string => {
 		return `${key}=${value}`;
 	}).join("\n");
-	return new FNV1a(256, raw).hashHexPadding();
+	return new FNV1a(512, raw).hashHexPadding();
 }
 /**
  * Get the hash of the path.
@@ -48,11 +48,11 @@ async function getDirectoryHash(path: string | URL): Promise<string> {
  * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
  * >   - *Resources*
  * @param {string | URL} path Path.
- * @returns {Promise<string>} Hash of the path, 256 bits.
+ * @returns {Promise<string>} Hash of the path, 512 bits.
  * @example
  * ```ts
  * await getHash(Deno.cwd());
- * //=> "B88A58267C52D8190C154BD3241D84EE3698F84AA2443D87B97F20D272795260"
+ * //=> "87C77A27D4779AB3078B941B86FF07CA0929A4E9D9581F6BAE380F3194287E3ADF4863355711426E79D4B673B71E9DE5F2A3E3F9D12C93FF2BDBD376DE93065D"
  * ```
  */
 export async function getHash(path: string | URL): Promise<string> {
