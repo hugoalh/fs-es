@@ -83,7 +83,7 @@ An ES (JavaScript & TypeScript) module for enhanced file system operation.
   function getDriveInfo(options?: FSGetDriveInfoOptions): Promise<FSDriveInfo[]>;
   ```
 - ```ts
-  function getHash(path: string | URL): Promise<string>;
+  function getHash(path: string | URL, options?: FSGetHashOptions): Promise<string>;
   ```
 - ```ts
   function getSize(path: string | URL): Promise<bigint>;

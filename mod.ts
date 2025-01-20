@@ -27,7 +27,10 @@ export {
 	existSync,
 	type FSExistOptions
 } from "./exist.ts";
-export { getHash } from "./hash.ts";
+export {
+	getHash,
+	type FSGetHashOptions
+} from "./hash.ts";
 export {
 	getSize,
 	getSizeSync
