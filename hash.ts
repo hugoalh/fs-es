@@ -100,7 +100,7 @@ function getDirectoryHashSync(path: string | URL, options: Required<FSGetHashOpt
 	}).join("\n");
 	return new FNV1a(size, raw).hashHexPadding();
 }
-function resolveOptions(options: FSGetHashOptions): Required<FSGetHashOptions> {
+function resolveGetHashOptions(options: FSGetHashOptions): Required<FSGetHashOptions> {
 	const { size = 512 }: FSGetHashOptions = options;
 	return { size };
 }
@@ -121,7 +121,7 @@ function resolveOptions(options: FSGetHashOptions): Required<FSGetHashOptions> {
  * ```
  */
 export async function getHash(path: string | URL, options: FSGetHashOptions = {}): Promise<string> {
-	const optionsFmt: Required<FSGetHashOptions> = resolveOptions(options);
+	const optionsFmt: Required<FSGetHashOptions> = resolveGetHashOptions(options);
 	const {
 		isDirectory,
 		isFile,
@@ -155,7 +155,7 @@ export async function getHash(path: string | URL, options: FSGetHashOptions = {}
  * ```
  */
 export function getHashSync(path: string | URL, options: FSGetHashOptions = {}): string {
-	const optionsFmt: Required<FSGetHashOptions> = resolveOptions(options);
+	const optionsFmt: Required<FSGetHashOptions> = resolveGetHashOptions(options);
 	const {
 		isDirectory,
 		isFile,
