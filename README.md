@@ -62,7 +62,7 @@ An ES (JavaScript & TypeScript) module for enhanced file system operation.
 ## 🧩 APIs
 
 - ```ts
-  function compare(oldPath: string | URL, newPath: string | URL): Promise<FSCompareResult>;
+  function compareDirectories(oldPath: string | URL, newPath: string | URL): Promise<FSCompareDirectoriesResult>;
   ```
 - ```ts
   function emptyDir(path: string | URL): Promise<void>;

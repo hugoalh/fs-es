@@ -1,4 +1,13 @@
 export {
+	compareDirectories,
+	compareDirectoriesSync,
+	compareFilesAreDifferent,
+	compareFilesAreDifferentSync,
+	compareSymlinksAreDifferent,
+	compareSymlinksAreDifferentSync,
+	type FSCompareDirectoriesResult
+} from "./compare.ts";
+export {
 	getDriveInfo,
 	getDriveInfoSync,
 	type FSDriveInfo,
