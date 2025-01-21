@@ -330,7 +330,7 @@ function* walkerSync(param: FSWalkerParameters, options: FSWalkOptionsInternal):
 		}
 	}
 }
-function resolveRootPath(root: string | URL): string {
+function resolveWalkRoot(root: string | URL): string {
 	const rootFmt: string = (root instanceof URL) ? getPathFromFileUrl(root) : root;
 	return (isPathAbsolute(rootFmt) ? rootFmt : joinPath(Deno.cwd(), rootFmt));
 }
@@ -395,7 +395,7 @@ export async function walk(root: string | URL, options?: FSWalkOptions & { extra
  */
 export async function walk(root: string | URL, options: FSWalkOptions & { extraInfo: true; }): Promise<AsyncGenerator<FSWalkEntryExtra>>;
 export async function walk(root: string | URL, options: FSWalkOptions = {}): Promise<AsyncGenerator<FSWalkEntry | FSWalkEntryExtra>> {
-	const rootFmt: string = resolveRootPath(root);
+	const rootFmt: string = resolveWalkRoot(root);
 	const optionsFmt: FSWalkOptionsInternal = resolveWalkOptions(options);
 	const rootStatL: Deno.FileInfo = await Deno.lstat(root);
 	if (!rootStatL.isDirectory) {
@@ -443,7 +443,7 @@ export function walkSync(root: string | URL, options?: FSWalkOptions & { extraIn
  */
 export function walkSync(root: string | URL, options: FSWalkOptions & { extraInfo: true; }): Generator<FSWalkEntryExtra>;
 export function walkSync(root: string | URL, options: FSWalkOptions = {}): Generator<FSWalkEntry | FSWalkEntryExtra> {
-	const rootFmt: string = resolveRootPath(root);
+	const rootFmt: string = resolveWalkRoot(root);
 	const optionsFmt: FSWalkOptionsInternal = resolveWalkOptions(options);
 	const rootStatL: Deno.FileInfo = Deno.lstatSync(root);
 	if (!rootStatL.isDirectory) {
