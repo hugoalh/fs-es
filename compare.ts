@@ -136,6 +136,11 @@ export interface FSCompareDirectoriesResult {
 }
 /**
  * Compare the differences between the directories, asynchronously.
+ * 
+ * > **🛡️ Runtime Permissions**
+ * > 
+ * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * >   - *Resources*
  * @param {string | URL} oldPath Path of the old directory.
  * @param {string | URL} newPath Path of the new directory.
  * @returns {Promise<FSCompareDirectoriesResult>} Result of the compare.
@@ -210,6 +215,11 @@ export async function compareDirectories(oldPath: string | URL, newPath: string 
 }
 /**
  * Compare the differences between the directories, synchronously.
+ * 
+ * > **🛡️ Runtime Permissions**
+ * > 
+ * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * >   - *Resources*
  * @param {string | URL} oldPath Path of the old directory.
  * @param {string | URL} newPath Path of the new directory.
  * @returns {FSCompareDirectoriesResult} Result of the compare.
