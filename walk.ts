@@ -438,7 +438,7 @@ export function walkSync(root: string | URL, options?: FSWalkOptions & { extraIn
  */
 export function walkSync(root: string | URL, options: FSWalkOptions & { extraInfo: true; }): Generator<FSWalkEntryExtra>;
 export function walkSync(root: string | URL, options: FSWalkOptions = {}): Generator<FSWalkEntry | FSWalkEntryExtra> {
-	const rootFmt: string = resolveWalkRoot(root);
+	const rootFmt: string = resolveAbsolutePath(root);
 	const optionsFmt: FSWalkOptionsInternal = resolveWalkOptions(options);
 	const rootStatL: Deno.FileInfo = Deno.lstatSync(root);
 	if (!rootStatL.isDirectory) {
