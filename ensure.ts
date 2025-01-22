@@ -1,7 +1,24 @@
 import { dirname as getPathDirname } from "jsr:@std/path@^1.0.8/dirname";
 import { fromFileUrl as getPathFromFileUrl } from "jsr:@std/path@^1.0.8/from-file-url";
 import { resolve as resolvePath } from "jsr:@std/path@^1.0.8/resolve";
-import { getEntityTypeString } from "./_entity_type.ts";
+type EntityType = "directory" | "file" | "unknown" | "symlink";
+/**
+ * Get the entity type as string.
+ * @param {Deno.DirEntry | Deno.FileInfo} stat Entity information.
+ * @returns {EntityType} Entity type as a string.
+ */
+function getEntityTypeString(stat: Deno.DirEntry | Deno.FileInfo): EntityType {
+	if (stat.isDirectory) {
+		return "directory";
+	}
+	if (stat.isFile) {
+		return "file";
+	}
+	if (stat.isSymlink) {
+		return "symlink";
+	}
+	return "unknown";
+}
 /**
  * Ensure the directory does exist, asynchronously.
  * 
