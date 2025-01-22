@@ -1,7 +1,6 @@
-import { fromFileUrl as getPathFromFileUrl } from "jsr:@std/path@^1.0.8/from-file-url";
-import { isAbsolute as isPathAbsolute } from "jsr:@std/path@^1.0.8/is-absolute";
 import { join as joinPath } from "jsr:@std/path@^1.0.8/join";
 import { relative as getPathRelative } from "jsr:@std/path@^1.0.8/relative";
+import { resolveAbsolutePath } from "./_path.ts";
 export interface FSWalkEntry {
 	/**
 	 * Whether the entry is a directory.
@@ -330,10 +329,6 @@ function* walkerSync(param: FSWalkerParameters, options: FSWalkOptionsInternal):
 		}
 	}
 }
-function resolveWalkRoot(root: string | URL): string {
-	const rootFmt: string = (root instanceof URL) ? getPathFromFileUrl(root) : root;
-	return (isPathAbsolute(rootFmt) ? rootFmt : joinPath(Deno.cwd(), rootFmt));
-}
 function resolveWalkOptions(options: FSWalkOptions): FSWalkOptionsInternal {
 	const {
 		depth = Infinity,
@@ -395,7 +390,7 @@ export async function walk(root: string | URL, options?: FSWalkOptions & { extra
  */
 export async function walk(root: string | URL, options: FSWalkOptions & { extraInfo: true; }): Promise<AsyncGenerator<FSWalkEntryExtra>>;
 export async function walk(root: string | URL, options: FSWalkOptions = {}): Promise<AsyncGenerator<FSWalkEntry | FSWalkEntryExtra>> {
-	const rootFmt: string = resolveWalkRoot(root);
+	const rootFmt: string = resolveAbsolutePath(root);
 	const optionsFmt: FSWalkOptionsInternal = resolveWalkOptions(options);
 	const rootStatL: Deno.FileInfo = await Deno.lstat(root);
 	if (!rootStatL.isDirectory) {
