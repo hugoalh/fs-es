@@ -48,9 +48,6 @@ async function getDirectoryHash(path: string | URL, options: Required<FSGetHashO
 		isSymlinkFile,
 		pathAbsolute
 	} of await walk(path)) {
-		if (bin.has(pathAbsolute)) {
-			throw new ReferenceError(`Path \`${pathAbsolute}\` process again, last result is \`${bin.get(pathAbsolute)}\`!`);
-		}
 		if (isDirectory) {
 			bin.set(pathAbsolute, "-".repeat(Math.round(size / 4)));
 		} else if (isFile) {
@@ -79,9 +76,6 @@ function getDirectoryHashSync(path: string | URL, options: Required<FSGetHashOpt
 		isSymlinkFile,
 		pathAbsolute
 	} of walkSync(path)) {
-		if (bin.has(pathAbsolute)) {
-			throw new ReferenceError(`Path \`${pathAbsolute}\` process again, last result is \`${bin.get(pathAbsolute)}\`!`);
-		}
 		if (isDirectory) {
 			bin.set(pathAbsolute, "-".repeat(Math.round(size / 4)));
 		} else if (isFile) {
