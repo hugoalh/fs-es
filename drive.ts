@@ -130,7 +130,7 @@ function resolvePSDriveInfo(commandOutput: Deno.CommandOutput): FSDriveInfo[] {
  * Get the info of the drives, asynchronously.
  * 
  * > **🛡️ Runtime Permissions**
- * >
+ * > 
  * > - Subprocesses \[Deno: `run`\]
  * >   - `pwsh`
  * @param {FSGetDriveInfoOptions} [options={}] Options.
@@ -143,7 +143,7 @@ export async function getDriveInfo(options?: FSGetDriveInfoOptions): Promise<FSD
  * Get the info of the drives, synchronously.
  * 
  * > **🛡️ Runtime Permissions**
- * >
+ * > 
  * > - Subprocesses \[Deno: `run`\]
  * >   - `pwsh`
  * @param {FSGetDriveInfoOptions} [options={}] Options.
