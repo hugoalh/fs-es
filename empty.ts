@@ -1,5 +1,5 @@
-import { fromFileUrl as getPathFromFileUrl } from "jsr:@std/path@^1.0.8/from-file-url";
 import { join as joinPath } from "jsr:@std/path@^1.0.8/join";
+import { convertToPathString } from "./_path.ts";
 import {
 	ensureDir,
 	ensureDirSync
@@ -23,7 +23,7 @@ import {
  * ```
  */
 export async function emptyDir(path: string | URL): Promise<void> {
-	const pathFmt: string = (path instanceof URL) ? getPathFromFileUrl(path) : path;
+	const pathFmt: string = convertToPathString(path);
 	await ensureDir(path);
 	const contents: readonly Deno.DirEntry[] = await Array.fromAsync(Deno.readDir(path));
 	const results: readonly PromiseSettledResult<void>[] = await Promise.allSettled(contents.map(({ name }: Deno.DirEntry): Promise<void> => {
@@ -60,7 +60,7 @@ export {
  * ```
  */
 export function emptyDirSync(path: string | URL): void {
-	const pathFmt: string = (path instanceof URL) ? getPathFromFileUrl(path) : path;
+	const pathFmt: string = convertToPathString(path);
 	ensureDirSync(path);
 	const fails: Error[] = [];
 	for (const { name } of Deno.readDirSync(path)) {
