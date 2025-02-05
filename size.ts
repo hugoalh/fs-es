@@ -6,7 +6,7 @@ import {
  * Get the size of the path, asynchronously.
  * 
  * > **🛡️ Runtime Permissions**
- * >
+ * > 
  * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
  * >   - *Resources*
  * @param {string | URL} path Path.
@@ -27,7 +27,7 @@ export async function getSize(path: string | URL): Promise<bigint> {
  * Get the size of the path, synchronously.
  * 
  * > **🛡️ Runtime Permissions**
- * >
+ * > 
  * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
  * >   - *Resources*
  * @param {string | URL} path Path.

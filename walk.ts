@@ -401,7 +401,6 @@ function resolveWalkOptions(options: FSWalkOptions): FSWalkOptionsInternal {
  */
 export async function walk(root: string | URL, options?: FSWalkOptions & { extraInfo?: false; }): Promise<AsyncGenerator<FSWalkEntry>>;
 /**
-/**
  * Walk through the directory and yield information about each entry encountered, asynchronously.
  * 
  * The order of entries is not guaranteed.
@@ -448,7 +447,6 @@ export async function walk(root: string | URL, options: FSWalkOptions = {}): Pro
  * @returns {Generator<FSWalkEntry>} A sync iterable iterator that yields the walk entry information.
  */
 export function walkSync(root: string | URL, options?: FSWalkOptions & { extraInfo?: false; }): Generator<FSWalkEntry>;
-/**
 /**
  * Walk through the directory and yield information about each entry encountered, synchronously.
  * 
