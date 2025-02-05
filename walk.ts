@@ -1,6 +1,6 @@
 import { join as joinPath } from "jsr:@std/path@^1.0.8/join";
 import { relative as getPathRelative } from "jsr:@std/path@^1.0.8/relative";
-import { resolveAbsolutePath } from "./_path.ts";
+import { resolvePathAbsolute } from "./_path.ts";
 export interface FSWalkEntry {
 	/**
 	 * Whether the entry is a directory.
@@ -57,9 +57,12 @@ export interface FSWalkEntry {
 }
 export interface FSWalkEntryExtra extends Omit<Deno.FileInfo, "isDirectory" | "isFile" | "isSymlink">, FSWalkEntry {
 }
+export type FSActionOnPermissionDenied =
+	| "throw"
+	| ((entry: FSWalkEntry) => void);
 export interface FSWalkOptions {
 	/**
-	 * Maximum depth of the file tree should be walked recursively.
+	 * Maximum depth of the entry tree should be walked recursively.
 	 * @default {Infinity}
 	 */
 	depth?: number;
@@ -102,6 +105,11 @@ export interface FSWalkOptions {
 	 * If specified, entries which match any of these regular expressions are included.
 	 */
 	matches?: readonly RegExp[];
+	/**
+	 * Handle on permission denied.
+	 * @default {"throw"}
+	 */
+	onPermissionDenied?: FSActionOnPermissionDenied;
 	/**
 	 * Exclude entries by regular expressions.
 	 * 
@@ -219,6 +227,7 @@ async function* walker(param: FSWalkerParameters, options: FSWalkOptionsInternal
 	const {
 		depth,
 		extraInfo,
+		onPermissionDenied,
 		walkSymlinkDirectories
 	}: FSWalkOptionsInternal = options;
 	for await (const {
@@ -260,12 +269,19 @@ async function* walker(param: FSWalkerParameters, options: FSWalkOptionsInternal
 			isDirectory ||
 			(isSymlinkDirectory && walkSymlinkDirectories)
 		) && depthCurrent < depth) {
-			yield* walker({
-				depthCurrent: depthCurrent + 1,
-				paths: [...paths, name],
-				root,
-				viaSymlinkDirectory: viaSymlinkDirectory || isSymlinkDirectory
-			}, options);
+			try {
+				yield* walker({
+					depthCurrent: depthCurrent + 1,
+					paths: [...paths, name],
+					root,
+					viaSymlinkDirectory: viaSymlinkDirectory || isSymlinkDirectory
+				}, options);
+			} catch (error) {
+				if (!(error instanceof Deno.errors.PermissionDenied && typeof onPermissionDenied === "function")) {
+					throw error;
+				}
+				onPermissionDenied(result);
+			}
 		}
 	}
 }
@@ -279,6 +295,7 @@ function* walkerSync(param: FSWalkerParameters, options: FSWalkOptionsInternal):
 	const {
 		depth,
 		extraInfo,
+		onPermissionDenied,
 		walkSymlinkDirectories
 	}: FSWalkOptionsInternal = options;
 	for (const {
@@ -320,12 +337,19 @@ function* walkerSync(param: FSWalkerParameters, options: FSWalkOptionsInternal):
 			isDirectory ||
 			(isSymlinkDirectory && walkSymlinkDirectories)
 		) && depthCurrent < depth) {
-			yield* walkerSync({
-				depthCurrent: depthCurrent + 1,
-				paths: [...paths, name],
-				root,
-				viaSymlinkDirectory: viaSymlinkDirectory || isSymlinkDirectory
-			}, options);
+			try {
+				yield* walkerSync({
+					depthCurrent: depthCurrent + 1,
+					paths: [...paths, name],
+					root,
+					viaSymlinkDirectory: viaSymlinkDirectory || isSymlinkDirectory
+				}, options);
+			} catch (error) {
+				if (!(error instanceof Deno.errors.PermissionDenied && typeof onPermissionDenied === "function")) {
+					throw error;
+				}
+				onPermissionDenied(result);
+			}
 		}
 	}
 }
@@ -339,6 +363,7 @@ function resolveWalkOptions(options: FSWalkOptions): FSWalkOptionsInternal {
 		includeSymlinkDirectories = true,
 		includeSymlinkFiles = true,
 		matches,
+		onPermissionDenied = "throw",
 		skips,
 		walkSymlinkDirectories = false
 	}: FSWalkOptions = options;
@@ -356,6 +381,7 @@ function resolveWalkOptions(options: FSWalkOptions): FSWalkOptionsInternal {
 		includeSymlinkDirectories,
 		includeSymlinkFiles,
 		matches,
+		onPermissionDenied,
 		skips,
 		walkSymlinkDirectories
 	};
@@ -390,7 +416,7 @@ export async function walk(root: string | URL, options?: FSWalkOptions & { extra
  */
 export async function walk(root: string | URL, options: FSWalkOptions & { extraInfo: true; }): Promise<AsyncGenerator<FSWalkEntryExtra>>;
 export async function walk(root: string | URL, options: FSWalkOptions = {}): Promise<AsyncGenerator<FSWalkEntry | FSWalkEntryExtra>> {
-	const rootFmt: string = resolveAbsolutePath(root);
+	const rootFmt: string = resolvePathAbsolute(root);
 	const optionsFmt: FSWalkOptionsInternal = resolveWalkOptions(options);
 	const rootStatL: Deno.FileInfo = await Deno.lstat(root);
 	if (!rootStatL.isDirectory) {
@@ -438,7 +464,7 @@ export function walkSync(root: string | URL, options?: FSWalkOptions & { extraIn
  */
 export function walkSync(root: string | URL, options: FSWalkOptions & { extraInfo: true; }): Generator<FSWalkEntryExtra>;
 export function walkSync(root: string | URL, options: FSWalkOptions = {}): Generator<FSWalkEntry | FSWalkEntryExtra> {
-	const rootFmt: string = resolveAbsolutePath(root);
+	const rootFmt: string = resolvePathAbsolute(root);
 	const optionsFmt: FSWalkOptionsInternal = resolveWalkOptions(options);
 	const rootStatL: Deno.FileInfo = Deno.lstatSync(root);
 	if (!rootStatL.isDirectory) {
