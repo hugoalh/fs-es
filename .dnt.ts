@@ -9,6 +9,7 @@ await invokeDenoNodeJSTransformer({
 		"README.md"
 	],
 	entrypoints: configJSR.getExports(),
+	fixInjectedImports: true,
 	generateDeclarationMap: true,
 	mappings: {
 		"https://raw.githubusercontent.com/hugoalh/fnv-es/v0.1.0/1a.ts": {
