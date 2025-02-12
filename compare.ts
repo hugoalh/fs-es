@@ -162,7 +162,7 @@ export async function compareDirectories(oldPath: string | URL, newPath: string 
 	const [
 		oldEntries,
 		newEntries
-	]: [FSWalkEntryExtra[], FSWalkEntryExtra[]] = await Promise.all([
+	]: [readonly FSWalkEntryExtra[], readonly FSWalkEntryExtra[]] = await Promise.all([
 		Array.fromAsync(await walk(oldPath, { extraInfo: true })),
 		Array.fromAsync(await walk(newPath, { extraInfo: true }))
 	]);
@@ -233,8 +233,8 @@ export function compareDirectoriesSync(oldPath: string | URL, newPath: string | 
 	if (!newStatL.isDirectory) {
 		throw new Deno.errors.NotADirectory(`Path \`${newPath}\` (parameter \`newPath\`) is not a directory!`);
 	}
-	const oldEntries: FSWalkEntryExtra[] = Array.from(walkSync(oldPath, { extraInfo: true }));
-	const newEntries: FSWalkEntryExtra[] = Array.from(walkSync(newPath, { extraInfo: true }));
+	const oldEntries: readonly FSWalkEntryExtra[] = Array.from(walkSync(oldPath, { extraInfo: true }));
+	const newEntries: readonly FSWalkEntryExtra[] = Array.from(walkSync(newPath, { extraInfo: true }));
 	const created: FSWalkEntryExtra[] = [];
 	const modified: FSWalkEntryExtra[] = [];
 	const removed: FSWalkEntryExtra[] = [];

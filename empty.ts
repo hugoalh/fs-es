@@ -62,16 +62,16 @@ export {
 export function emptyDirSync(path: string | URL): void {
 	const pathFmt: string = convertToPathString(path);
 	ensureDirSync(path);
-	const fails: Error[] = [];
+	const errors: Error[] = [];
 	for (const { name } of Deno.readDirSync(path)) {
 		try {
 			Deno.removeSync(joinPath(pathFmt, name), { recursive: true });
 		} catch (error) {
-			fails.push(error as Error);
+			errors.push(error as Error);
 		}
 	}
-	if (fails.length > 0) {
-		throw new AggregateError(fails, `Unable to empty the directory \`${path}\`!`);
+	if (errors.length > 0) {
+		throw new AggregateError(errors, `Unable to empty the directory \`${path}\`!`);
 	}
 }
 export {
