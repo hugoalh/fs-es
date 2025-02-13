@@ -74,10 +74,10 @@ An ES (JavaScript & TypeScript) module for enhanced file system operation.
   function ensureFile(path: string | URL): Promise<void>;
   ```
 - ```ts
-  function ensureLink(src: string | URL, dest: string | URL): Promise<void>;
+  function ensureLink(sourcePath: string | URL, targetPath: string | URL): Promise<void>;
   ```
 - ```ts
-  function ensureSymlink(src: string | URL, dest: string | URL): Promise<void>;
+  function ensureSymlink(sourcePath: string | URL, targetPath: string | URL): Promise<void>;
   ```
 - ```ts
   function exist(path: string | URL, options?: FSExistOptions): Promise<boolean>;

@@ -45,9 +45,9 @@ function getEntityTypeString(stat: Deno.DirEntry | Deno.FileInfo): EntityType {
  */
 export async function ensureDir(path: string | URL): Promise<void> {
 	try {
-		const pathStatL: Deno.FileInfo = await Deno.lstat(path);
-		if (!pathStatL.isDirectory) {
-			throw new Error(`Unable to ensure the directory \`${path}\` exist, path is type of ${getEntityTypeString(pathStatL)}!`);
+		const statL: Deno.FileInfo = await Deno.lstat(path);
+		if (!statL.isDirectory) {
+			throw new Error(`Unable to ensure the directory \`${path}\` exist, path is type of ${getEntityTypeString(statL)}!`);
 		}
 	} catch (error) {
 		if (!(error instanceof Deno.errors.NotFound)) {
@@ -79,9 +79,9 @@ export {
  */
 export function ensureDirSync(path: string | URL): void {
 	try {
-		const pathStatL: Deno.FileInfo = Deno.lstatSync(path);
-		if (!pathStatL.isDirectory) {
-			throw new Error(`Unable to ensure the directory \`${path}\` exist, path is type of ${getEntityTypeString(pathStatL)}!`);
+		const statL: Deno.FileInfo = Deno.lstatSync(path);
+		if (!statL.isDirectory) {
+			throw new Error(`Unable to ensure the directory \`${path}\` exist, path is type of ${getEntityTypeString(statL)}!`);
 		}
 	} catch (error) {
 		if (!(error instanceof Deno.errors.NotFound)) {
@@ -113,9 +113,9 @@ export {
  */
 export async function ensureFile(path: string | URL): Promise<void> {
 	try {
-		const pathStatL: Deno.FileInfo = await Deno.lstat(path);
-		if (!pathStatL.isFile) {
-			throw new Error(`Unable to ensure the file \`${path}\` exist, path is type of ${getEntityTypeString(pathStatL)}!`);
+		const statL: Deno.FileInfo = await Deno.lstat(path);
+		if (!statL.isFile) {
+			throw new Error(`Unable to ensure the file \`${path}\` exist, path is type of ${getEntityTypeString(statL)}!`);
 		}
 	} catch (error) {
 		if (!(error instanceof Deno.errors.NotFound)) {
@@ -145,9 +145,9 @@ export async function ensureFile(path: string | URL): Promise<void> {
  */
 export function ensureFileSync(path: string | URL): void {
 	try {
-		const pathStatL: Deno.FileInfo = Deno.lstatSync(path);
-		if (!pathStatL.isFile) {
-			throw new Error(`Unable to ensure the file \`${path}\` exist, path is type of ${getEntityTypeString(pathStatL)}!`);
+		const statL: Deno.FileInfo = Deno.lstatSync(path);
+		if (!statL.isFile) {
+			throw new Error(`Unable to ensure the file \`${path}\` exist, path is type of ${getEntityTypeString(statL)}!`);
 		}
 	} catch (error) {
 		if (!(error instanceof Deno.errors.NotFound)) {
@@ -170,19 +170,18 @@ export function ensureFileSync(path: string | URL): void {
  * >   - *Resources*
  * > - File System - Write \[Deno: `write`; NodeJS 🧪: `fs-write`\]
  * >   - *Resources*
- * @param {string | URL} src Path of the source file.
- * @param {string | URL} dest Path of the hard link.
+ * @param {string | URL} sourcePath Path of the source file.
+ * @param {string | URL} targetPath Path of the hard link.
  * @returns {Promise<void>}
  * @example
  * ```ts
  * await ensureLink("./path/to/source.dat", "./path/to/link.dat");
  * ```
  */
-export async function ensureLink(src: string | URL, dest: string | URL): Promise<void> {
-	const srcFmt: string = convertToPathString(src);
-	const destFmt: string = convertToPathString(dest);
-	await ensureDir(getPathDirname(destFmt));
-	await Deno.link(srcFmt, destFmt);
+export async function ensureLink(sourcePath: string | URL, targetPath: string | URL): Promise<void> {
+	const targetPathFmt: string = convertToPathString(targetPath);
+	await ensureDir(getPathDirname(targetPathFmt));
+	await Deno.link(convertToPathString(sourcePath), targetPathFmt);
 }
 /**
  * Ensure the hard link does exist, synchronously.
@@ -197,19 +196,18 @@ export async function ensureLink(src: string | URL, dest: string | URL): Promise
  * >   - *Resources*
  * > - File System - Write \[Deno: `write`; NodeJS 🧪: `fs-write`\]
  * >   - *Resources*
- * @param {string | URL} src Path of the source file.
- * @param {string | URL} dest Path of the hard link.
+ * @param {string | URL} sourcePath Path of the source file.
+ * @param {string | URL} targetPath Path of the hard link.
  * @returns {void}
  * @example
  * ```ts
  * ensureLinkSync("./path/to/source.dat", "./path/to/link.dat");
  * ```
  */
-export function ensureLinkSync(src: string | URL, dest: string | URL): void {
-	const srcFmt: string = convertToPathString(src);
-	const destFmt: string = convertToPathString(dest);
-	ensureDirSync(getPathDirname(destFmt));
-	Deno.linkSync(srcFmt, destFmt);
+export function ensureLinkSync(sourcePath: string | URL, targetPath: string | URL): void {
+	const targetPathFmt: string = convertToPathString(targetPath);
+	ensureDirSync(getPathDirname(targetPathFmt));
+	Deno.linkSync(convertToPathString(sourcePath), targetPathFmt);
 }
 /**
  * Ensure the symlink does exist, asynchronously.
@@ -222,24 +220,24 @@ export function ensureLinkSync(src: string | URL, dest: string | URL): void {
  * >   - *Resources*
  * > - File System - Write \[Deno: `write`; NodeJS 🧪: `fs-write`\]
  * >   - *Resources*
- * @param {string | URL} src Path of the source.
- * @param {string | URL} dest Path of the symlink.
+ * @param {string | URL} sourcePath Path of the source.
+ * @param {string | URL} targetPath Path of the symlink.
  * @returns {Promise<void>}
  * @example
  * ```ts
  * await ensureSymlink("./path/to/source.dat", "./path/to/link.dat");
  * ```
  */
-export async function ensureSymlink(src: string | URL, dest: string | URL): Promise<void> {
-	const srcFmt: string = resolvePathAbsolute(src);
-	const destFmt: string = resolvePathAbsolute(dest);
-	const srcStatL: Deno.FileInfo = await Deno.lstat(src);
+export async function ensureSymlink(sourcePath: string | URL, targetPath: string | URL): Promise<void> {
+	const sourcePathFmt: string = resolvePathAbsolute(sourcePath);
+	const targetPathFmt: string = resolvePathAbsolute(targetPath);
+	const sourceStatL: Deno.FileInfo = await Deno.lstat(sourcePath);
 	try {
-		const destStatL: Deno.FileInfo = await Deno.lstat(dest);
-		if (!destStatL.isSymlink) {
-			throw new Error(`Unable to ensure the symlink \`${dest}\` exist, path is type of ${getEntityTypeString(destStatL)}!`);
+		const targetStatL: Deno.FileInfo = await Deno.lstat(targetPath);
+		if (!targetStatL.isSymlink) {
+			throw new Error(`Unable to ensure the symlink \`${targetPath}\` exist, path is type of ${getEntityTypeString(targetStatL)}!`);
 		}
-		if (srcFmt !== await Deno.readLink(dest)) {
+		if (sourcePathFmt !== await Deno.readLink(targetPath)) {
 			throw undefined;
 		}
 	} catch (error) {
@@ -249,9 +247,9 @@ export async function ensureSymlink(src: string | URL, dest: string | URL): Prom
 		)) {
 			throw error;
 		}
-		await ensureDir(getPathDirname(destFmt));
-		await Deno.symlink(src, dest, {
-			type: srcStatL.isDirectory ? "dir" : "file"
+		await ensureDir(getPathDirname(targetPathFmt));
+		await Deno.symlink(sourcePath, targetPath, {
+			type: sourceStatL.isDirectory ? "dir" : "file"
 		});
 	}
 }
@@ -266,24 +264,24 @@ export async function ensureSymlink(src: string | URL, dest: string | URL): Prom
  * >   - *Resources*
  * > - File System - Write \[Deno: `write`; NodeJS 🧪: `fs-write`\]
  * >   - *Resources*
- * @param {string | URL} src Path of the source.
- * @param {string | URL} dest Path of the symlink.
+ * @param {string | URL} sourcePath Path of the source.
+ * @param {string | URL} targetPath Path of the symlink.
  * @returns {void}
  * @example
  * ```ts
  * ensureSymlinkSync("./path/to/source.dat", "./path/to/link.dat");
  * ```
  */
-export function ensureSymlinkSync(src: string | URL, dest: string | URL): void {
-	const srcFmt: string = resolvePathAbsolute(src);
-	const destFmt: string = resolvePathAbsolute(dest);
-	const srcStatL: Deno.FileInfo = Deno.lstatSync(src);
+export function ensureSymlinkSync(sourcePath: string | URL, targetPath: string | URL): void {
+	const sourcePathFmt: string = resolvePathAbsolute(sourcePath);
+	const targetPathFmt: string = resolvePathAbsolute(targetPath);
+	const sourceStatL: Deno.FileInfo = Deno.lstatSync(sourcePath);
 	try {
-		const destStatL: Deno.FileInfo = Deno.lstatSync(dest);
-		if (!destStatL.isSymlink) {
-			throw new Error(`Unable to ensure the symlink \`${dest}\` exist, path is type of ${getEntityTypeString(destStatL)}!`);
+		const targetStatL: Deno.FileInfo = Deno.lstatSync(targetPath);
+		if (!targetStatL.isSymlink) {
+			throw new Error(`Unable to ensure the symlink \`${targetPath}\` exist, path is type of ${getEntityTypeString(targetStatL)}!`);
 		}
-		if (srcFmt !== Deno.readLinkSync(dest)) {
+		if (sourcePathFmt !== Deno.readLinkSync(targetPath)) {
 			throw undefined;
 		}
 	} catch (error) {
@@ -293,9 +291,9 @@ export function ensureSymlinkSync(src: string | URL, dest: string | URL): void {
 		)) {
 			throw error;
 		}
-		ensureDirSync(getPathDirname(destFmt));
-		Deno.symlinkSync(src, dest, {
-			type: srcStatL.isDirectory ? "dir" : "file"
+		ensureDirSync(getPathDirname(targetPathFmt));
+		Deno.symlinkSync(sourcePath, targetPath, {
+			type: sourceStatL.isDirectory ? "dir" : "file"
 		});
 	}
 }
