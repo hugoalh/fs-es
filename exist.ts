@@ -36,6 +36,21 @@ export interface FSExistOptions {
 	 */
 	isReadable?: boolean;
 }
+function resolveExistOptions(options: FSExistOptions): Required<FSExistOptions> {
+	const {
+		isDirectory = false,
+		isFile = false,
+		isReadable = false
+	}: FSExistOptions = options;
+	if (isDirectory && isFile) {
+		throw new Error(`Parameters \`options.isDirectory\` and \`options.isFile\` are mutually exclusive!`);
+	}
+	return {
+		isDirectory,
+		isFile,
+		isReadable
+	};
+}
 /**
  * Test whether the path is exist, asynchronously.
  * 
@@ -102,23 +117,20 @@ export interface FSExistOptions {
  */
 export async function exist(path: string | URL, options: FSExistOptions = {}): Promise<boolean> {
 	const {
-		isDirectory = false,
-		isFile = false,
-		isReadable = false
-	}: FSExistOptions = options;
-	if (isDirectory && isFile) {
-		throw new Error(`Parameters \`options.isDirectory\` and \`options.isFile\` are mutually exclusive!`);
-	}
+		isDirectory,
+		isFile,
+		isReadable
+	}: Required<FSExistOptions> = resolveExistOptions(options);
 	try {
-		const pathStat: Deno.FileInfo = await Deno.stat(path);
+		const stat: Deno.FileInfo = await Deno.stat(path);
 		if (
-			(isDirectory && !pathStat.isDirectory) ||
-			(isFile && !pathStat.isFile)
+			(isDirectory && !stat.isDirectory) ||
+			(isFile && !stat.isFile)
 		) {
 			return false;
 		}
 		if (isReadable) {
-			return isEntityReadable(pathStat);
+			return isEntityReadable(stat);
 		}
 		return true;
 	} catch (error) {
@@ -203,23 +215,20 @@ export async function exist(path: string | URL, options: FSExistOptions = {}): P
  */
 export function existSync(path: string | URL, options: FSExistOptions = {}): boolean {
 	const {
-		isDirectory = false,
-		isFile = false,
-		isReadable = false
-	}: FSExistOptions = options;
-	if (isDirectory && isFile) {
-		throw new Error(`Parameters \`options.isDirectory\` and \`options.isFile\` are mutually exclusive!`);
-	}
+		isDirectory,
+		isFile,
+		isReadable
+	}: Required<FSExistOptions> = resolveExistOptions(options);
 	try {
-		const pathStat: Deno.FileInfo = Deno.statSync(path);
+		const stat: Deno.FileInfo = Deno.statSync(path);
 		if (
-			(isDirectory && !pathStat.isDirectory) ||
-			(isFile && !pathStat.isFile)
+			(isDirectory && !stat.isDirectory) ||
+			(isFile && !stat.isFile)
 		) {
 			return false;
 		}
 		if (isReadable) {
-			return isEntityReadable(pathStat);
+			return isEntityReadable(stat);
 		}
 		return true;
 	} catch (error) {
