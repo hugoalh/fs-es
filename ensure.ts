@@ -112,6 +112,7 @@ export {
  * ```
  */
 export async function ensureFile(path: string | URL): Promise<void> {
+	const pathFmt: string = convertToPathString(path);
 	try {
 		const statL: Deno.FileInfo = await Deno.lstat(path);
 		if (!statL.isFile) {
@@ -121,7 +122,7 @@ export async function ensureFile(path: string | URL): Promise<void> {
 		if (!(error instanceof Deno.errors.NotFound)) {
 			throw error;
 		}
-		await ensureDir(getPathDirname(convertToPathString(path)));
+		await ensureDir(getPathDirname(pathFmt));
 		await Deno.writeFile(path, new Uint8Array());
 	}
 }
@@ -144,6 +145,7 @@ export async function ensureFile(path: string | URL): Promise<void> {
  * ```
  */
 export function ensureFileSync(path: string | URL): void {
+	const pathFmt: string = convertToPathString(path);
 	try {
 		const statL: Deno.FileInfo = Deno.lstatSync(path);
 		if (!statL.isFile) {
@@ -153,7 +155,7 @@ export function ensureFileSync(path: string | URL): void {
 		if (!(error instanceof Deno.errors.NotFound)) {
 			throw error;
 		}
-		ensureDirSync(getPathDirname(convertToPathString(path)));
+		ensureDirSync(getPathDirname(pathFmt));
 		Deno.writeFileSync(path, new Uint8Array());
 	}
 }
@@ -179,9 +181,10 @@ export function ensureFileSync(path: string | URL): void {
  * ```
  */
 export async function ensureLink(sourcePath: string | URL, targetPath: string | URL): Promise<void> {
+	const sourcePathFmt: string = convertToPathString(sourcePath);
 	const targetPathFmt: string = convertToPathString(targetPath);
 	await ensureDir(getPathDirname(targetPathFmt));
-	await Deno.link(convertToPathString(sourcePath), targetPathFmt);
+	await Deno.link(sourcePathFmt, targetPathFmt);
 }
 /**
  * Ensure the hard link does exist, synchronously.
@@ -205,9 +208,10 @@ export async function ensureLink(sourcePath: string | URL, targetPath: string | 
  * ```
  */
 export function ensureLinkSync(sourcePath: string | URL, targetPath: string | URL): void {
+	const sourcePathFmt: string = convertToPathString(sourcePath);
 	const targetPathFmt: string = convertToPathString(targetPath);
 	ensureDirSync(getPathDirname(targetPathFmt));
-	Deno.linkSync(convertToPathString(sourcePath), targetPathFmt);
+	Deno.linkSync(sourcePathFmt, targetPathFmt);
 }
 /**
  * Ensure the symlink does exist, asynchronously.

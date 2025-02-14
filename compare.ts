@@ -19,6 +19,16 @@ import {
  * @returns {Promise<boolean>} Determine result.
  */
 export async function compareFilesAreDifferent(filePathA: string | URL, filePathB: string | URL): Promise<boolean> {
+	const [
+		fileAStat,
+		fileBStat
+	]: [Deno.FileInfo, Deno.FileInfo] = await Promise.all([
+		Deno.stat(filePathA),
+		Deno.stat(filePathB)
+	]);
+	if (fileAStat.size !== fileBStat.size) {
+		return false;
+	}
 	const fileA: AsyncGenerator<Uint8Array> = readFileAsChunks(filePathA, { reduceChunks: true });
 	const fileB: AsyncGenerator<Uint8Array> = readFileAsChunks(filePathB, { reduceChunks: true });
 	let done: boolean = false;
@@ -66,6 +76,11 @@ export async function compareFilesAreDifferent(filePathA: string | URL, filePath
  * @returns {boolean} Determine result.
  */
 export function compareFilesAreDifferentSync(filePathA: string | URL, filePathB: string | URL): boolean {
+	const fileAStat: Deno.FileInfo = Deno.statSync(filePathA);
+	const fileBStat: Deno.FileInfo = Deno.statSync(filePathB);
+	if (fileAStat.size !== fileBStat.size) {
+		return false;
+	}
 	const fileA: Generator<Uint8Array> = readFileAsChunksSync(filePathA, { reduceChunks: true });
 	const fileB: Generator<Uint8Array> = readFileAsChunksSync(filePathB, { reduceChunks: true });
 	let done: boolean = false;

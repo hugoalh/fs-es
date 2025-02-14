@@ -14,9 +14,9 @@ import {
  */
 export async function getSize(path: string | URL): Promise<bigint> {
 	let result: bigint = 0n;
-	const pathStatL: Deno.FileInfo = await Deno.lstat(path);
-	result += BigInt(pathStatL.size);
-	if (pathStatL.isDirectory) {
+	const statL: Deno.FileInfo = await Deno.lstat(path);
+	result += BigInt(statL.size);
+	if (statL.isDirectory) {
 		for await (const { size } of await walk(path, { extraInfo: true })) {
 			result += BigInt(size);
 		}
@@ -35,9 +35,9 @@ export async function getSize(path: string | URL): Promise<bigint> {
  */
 export function getSizeSync(path: string | URL): bigint {
 	let result: bigint = 0n;
-	const pathStatL: Deno.FileInfo = Deno.lstatSync(path);
-	result += BigInt(pathStatL.size);
-	if (pathStatL.isDirectory) {
+	const statL: Deno.FileInfo = Deno.lstatSync(path);
+	result += BigInt(statL.size);
+	if (statL.isDirectory) {
 		for (const { size } of walkSync(path, { extraInfo: true })) {
 			result += BigInt(size);
 		}

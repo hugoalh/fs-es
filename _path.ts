@@ -9,6 +9,6 @@ export function resolvePathAbsolute(path: string | URL): string {
 	const pathFmt: string = convertToPathString(path);
 	return (isPathAbsolute(pathFmt) ? pathFmt : joinPath(Deno.cwd(), pathFmt));
 }
-export function isSamePath(a: string | URL, b: string | URL): boolean {
-	return (resolvePath(resolvePathAbsolute(a)) === resolvePath(resolvePathAbsolute(b)));
+export function isSamePath(pathA: string | URL, pathB: string | URL): boolean {
+	return (resolvePath(resolvePathAbsolute(pathA)) === resolvePath(resolvePathAbsolute(pathB)));
 }
