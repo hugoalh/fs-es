@@ -25,8 +25,7 @@ import {
 export async function emptyDir(path: string | URL): Promise<void> {
 	const pathFmt: string = convertToPathString(path);
 	await ensureDir(path);
-	const contents: readonly Deno.DirEntry[] = await Array.fromAsync(Deno.readDir(path));
-	const results: readonly PromiseSettledResult<void>[] = await Promise.allSettled(contents.map(({ name }: Deno.DirEntry): Promise<void> => {
+	const results: readonly PromiseSettledResult<void>[] = await Promise.allSettled(await Array.fromAsync(Deno.readDir(path), ({ name }: Deno.DirEntry): Promise<void> => {
 		return Deno.remove(joinPath(pathFmt, name), { recursive: true });
 	}));
 	const fails: readonly PromiseRejectedResult[] = results.filter((result: PromiseSettledResult<void>): result is PromiseRejectedResult => {
