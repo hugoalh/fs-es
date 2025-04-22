@@ -1,4 +1,4 @@
-import { join as joinPath } from "jsr:@std/path@^1.0.8/join";
+import { join as joinPath } from "node:path";
 import { convertToPathString } from "./_path.ts";
 import {
 	ensureDir,

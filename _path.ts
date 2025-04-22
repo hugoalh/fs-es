@@ -1,9 +1,11 @@
-import { fromFileUrl as getPathFromFileUrl } from "jsr:@std/path@^1.0.8/from-file-url";
-import { isAbsolute as isPathAbsolute } from "jsr:@std/path@^1.0.8/is-absolute";
-import { join as joinPath } from "jsr:@std/path@^1.0.8/join";
-import { resolve as resolvePath } from "jsr:@std/path@^1.0.8/resolve";
+import {
+	isAbsolute as isPathAbsolute,
+	join as joinPath,
+	resolve as resolvePath
+} from "node:path";
+import { fileURLToPath as getPathFromFileURL } from "node:url";
 export function convertToPathString(path: string | URL): string {
-	return ((path instanceof URL) ? getPathFromFileUrl(path) : path);
+	return ((path instanceof URL) ? getPathFromFileURL(path) : path);
 }
 export function resolvePathAbsolute(path: string | URL): string {
 	const pathFmt: string = convertToPathString(path);

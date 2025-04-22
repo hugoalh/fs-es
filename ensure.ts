@@ -1,4 +1,4 @@
-import { dirname as getPathDirname } from "jsr:@std/path@^1.0.8/dirname";
+import { dirname as getPathDirname } from "node:path";
 import {
 	convertToPathString,
 	resolvePathAbsolute

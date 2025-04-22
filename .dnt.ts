@@ -21,9 +21,9 @@ await invokeDenoNodeJSTransformer({
 			name: "@hugoalh/is-json",
 			version: "^1.0.4"
 		},
-		"https://raw.githubusercontent.com/hugoalh/sort-es/v0.1.1/collection.ts": {
+		"https://raw.githubusercontent.com/hugoalh/sort-es/v0.2.0/collection.ts": {
 			name: "@hugoalh/sort",
-			version: "^0.1.1",
+			version: "^0.2.0",
 			subPath: "collection"
 		}
 	},

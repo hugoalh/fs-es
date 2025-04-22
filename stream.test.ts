@@ -1,4 +1,4 @@
-import { assertEquals } from "STD/assert/equals";
+import { deepStrictEqual } from "node:assert";
 import { readFileAsChunks } from "./stream.ts";
 Deno.test("ReadFileAsChunks 64 Standard", {
 	permissions: {
@@ -13,7 +13,7 @@ Deno.test("ReadFileAsChunks 64 Standard", {
 		bytes += chunk.length;
 		chunks += 1;
 	}
-	assertEquals(bytes, bytesExpected);
+	deepStrictEqual(bytes, bytesExpected);
 	console.debug(`Chunks: ${chunks}`);
 });
 Deno.test("ReadFileAsChunks 64 Reduce", {
@@ -32,7 +32,7 @@ Deno.test("ReadFileAsChunks 64 Reduce", {
 		bytes += chunk.length;
 		chunks += 1;
 	}
-	assertEquals(bytes, bytesExpected);
+	deepStrictEqual(bytes, bytesExpected);
 	console.debug(`Chunks: ${chunks}`);
 });
 Deno.test("ReadFileAsChunks 1024 Standard", {
@@ -48,7 +48,7 @@ Deno.test("ReadFileAsChunks 1024 Standard", {
 		bytes += chunk.length;
 		chunks += 1;
 	}
-	assertEquals(bytes, bytesExpected);
+	deepStrictEqual(bytes, bytesExpected);
 	console.debug(`Chunks: ${chunks}`);
 });
 Deno.test("ReadFileAsChunks 1024 Reduce", {
@@ -67,6 +67,6 @@ Deno.test("ReadFileAsChunks 1024 Reduce", {
 		bytes += chunk.length;
 		chunks += 1;
 	}
-	assertEquals(bytes, bytesExpected);
+	deepStrictEqual(bytes, bytesExpected);
 	console.debug(`Chunks: ${chunks}`);
 });

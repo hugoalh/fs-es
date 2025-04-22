@@ -2,7 +2,7 @@ import {
 	FNV1a,
 	type FNVBitsSize
 } from "https://raw.githubusercontent.com/hugoalh/fnv-es/v0.1.0/1a.ts";
-import { sortCollectionByKeys } from "https://raw.githubusercontent.com/hugoalh/sort-es/v0.1.1/collection.ts";
+import { sortCollectionByKeys } from "https://raw.githubusercontent.com/hugoalh/sort-es/v0.2.0/collection.ts";
 import { readFileAsChunksSync } from "./stream.ts";
 import {
 	walk,

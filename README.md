@@ -6,7 +6,7 @@
 [![JSR: @hugoalh/fs](https://img.shields.io/jsr/v/@hugoalh/fs?label=@hugoalh/fs&labelColor=F7DF1E&logo=jsr&logoColor=000000&style=flat "JSR: @hugoalh/fs")](https://jsr.io/@hugoalh/fs)
 [![NPM: @hugoalh/fs](https://img.shields.io/npm/v/@hugoalh/fs?label=@hugoalh/fs&labelColor=CB3837&logo=npm&logoColor=ffffff&style=flat "NPM: @hugoalh/fs")](https://www.npmjs.com/package/@hugoalh/fs)
 
-An ES (JavaScript & TypeScript) module for enhanced file system operation.
+An ECMAScript (JavaScript & TypeScript) module for enhanced file system operation.
 
 ## 🔰 Begin
 
@@ -49,13 +49,13 @@ An ES (JavaScript & TypeScript) module for enhanced file system operation.
 
 ### 🛡️ Runtime Permissions
 
-- File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+- **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
   - *Resources*
-- File System - Write \[Deno: `write`; NodeJS 🧪: `fs-write`\]
+- **File System - Write (Deno: `write`; NodeJS 🧪: `fs-write`):**
   - *Resources* (Optional)
-- Subprocesses \[Deno: `run`\]
+- **Subprocesses (Deno: `run`):**
   - `pwsh` (Optional)
-- System Information \[Deno: `sys`\]
+- **System Information (Deno: `sys`):**
   - `gid` (Optional, POSIX/UNIX Platforms)
   - `uid` (Optional, POSIX/UNIX Platforms)
 

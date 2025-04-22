@@ -1,4 +1,4 @@
-import { assertEquals } from "STD/assert/equals";
+import { deepStrictEqual } from "node:assert";
 import {
 	getHash,
 	getHashSync
@@ -18,5 +18,5 @@ Deno.test("Main", {
 		resultSync = getHashSync(Deno.cwd());
 	});
 	console.log(resultSync!);
-	assertEquals(resultSync!, resultAsync!);
+	deepStrictEqual(resultSync!, resultAsync!);
 });

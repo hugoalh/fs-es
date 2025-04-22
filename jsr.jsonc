@@ -17,7 +17,7 @@
 	"imports": {
 		"https://raw.githubusercontent.com/hugoalh/fnv-es/v0.1.0/1a.ts": "jsr:@hugoalh/fnv@^0.1.0/1a",
 		"https://raw.githubusercontent.com/hugoalh/is-json-es/v1.0.4/mod.ts": "jsr:@hugoalh/is-json@^1.0.4",
-		"https://raw.githubusercontent.com/hugoalh/sort-es/v0.1.1/collection.ts": "jsr:@hugoalh/sort@^0.1.1/collection"
+		"https://raw.githubusercontent.com/hugoalh/sort-es/v0.2.0/collection.ts": "jsr:@hugoalh/sort@^0.2.0/collection"
 	},
 	"publish": {
 		"exclude": [
@@ -33,8 +33,11 @@
 			"**/bench.tsx",
 			"**/test.ts",
 			"**/test.tsx",
+			"_test/**",
 			"npm/**",
-			".dnt.ts"
+			"test/**",
+			".dnt.ts",
+			".*.lint.ts"
 		],
 		"include": [
 			"**/*.json",

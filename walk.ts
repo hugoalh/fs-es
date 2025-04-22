@@ -1,5 +1,7 @@
-import { join as joinPath } from "jsr:@std/path@^1.0.8/join";
-import { relative as getPathRelative } from "jsr:@std/path@^1.0.8/relative";
+import {
+	join as joinPath,
+	relative as getPathRelative
+} from "node:path";
 import { resolvePathAbsolute } from "./_path.ts";
 export interface FSWalkEntry {
 	/**
