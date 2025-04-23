@@ -12,7 +12,7 @@ import {
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
  * @param {string | URL} filePathA Path of the file A.
  * @param {string | URL} filePathB Path of the file B.
@@ -69,7 +69,7 @@ export async function compareFilesAreDifferent(filePathA: string | URL, filePath
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
  * @param {string | URL} filePathA Path of the file A.
  * @param {string | URL} filePathB Path of the file B.
@@ -114,7 +114,7 @@ export function compareFilesAreDifferentSync(filePathA: string | URL, filePathB:
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
  * @param {string | URL} symlinkPathA Path of the symlink A.
  * @param {string | URL} symlinkPathB Path of the symlink B.
@@ -135,7 +135,7 @@ export async function compareSymlinksAreDifferent(symlinkPathA: string | URL, sy
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
  * @param {string | URL} symlinkPathA Path of the symlink A.
  * @param {string | URL} symlinkPathB Path of the symlink B.
@@ -154,7 +154,7 @@ export interface FSCompareDirectoriesResult {
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
  * @param {string | URL} oldPath Path of the old directory.
  * @param {string | URL} newPath Path of the new directory.
@@ -233,7 +233,7 @@ export async function compareDirectories(oldPath: string | URL, newPath: string 
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
  * @param {string | URL} oldPath Path of the old directory.
  * @param {string | URL} newPath Path of the new directory.

@@ -19,7 +19,7 @@ export interface FSReadFileAsChunksOptions {
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
  * @param {string | URL} filePath Path of the file.
  * @param {FSReadFileAsChunksOptions} [options={}] Options.
@@ -63,7 +63,7 @@ export async function* readFileAsChunks(filePath: string | URL, options: FSReadF
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
  * @param {string | URL} filePath Path of the file.
  * @param {FSReadFileAsChunksOptions} [options={}] Options.

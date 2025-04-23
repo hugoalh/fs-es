@@ -103,7 +103,7 @@ function resolveGetHashOptions(options: FSGetHashOptions): Required<FSGetHashOpt
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
  * @param {string | URL} path Path.
  * @param {FSGetHashOptions} [options={}] Options.
@@ -137,7 +137,7 @@ export async function getHash(path: string | URL, options: FSGetHashOptions = {}
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
  * @param {string | URL} path Path.
  * @param {FSGetHashOptions} [options={}] Options.

@@ -11,9 +11,9 @@ import {
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
- * > - File System - Write \[Deno: `write`; NodeJS 🧪: `fs-write`\]
+ * > - **File System - Write (Deno: `write`; NodeJS 🧪: `fs-write`):**
  * >   - *Resources*
  * @param {string | URL} path Path of the directory that need to empty.
  * @returns {Promise<void>}
@@ -47,9 +47,9 @@ export {
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
- * > - File System - Write \[Deno: `write`; NodeJS 🧪: `fs-write`\]
+ * > - **File System - Write (Deno: `write`; NodeJS 🧪: `fs-write`):**
  * >   - *Resources*
  * @param {string | URL} path Path of the directory that need to empty.
  * @returns {void}

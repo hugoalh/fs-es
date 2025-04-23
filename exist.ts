@@ -29,7 +29,7 @@ export interface FSExistOptions {
 	 * 
 	 * > **🛡️ Runtime Permissions**
 	 * > 
-	 * > - System Information \[Deno: `sys`\]
+	 * > - **System Information (Deno: `sys`):**
 	 * >   - `gid` (POSIX/UNIX Platforms)
 	 * >   - `uid` (POSIX/UNIX Platforms)
 	 * @default {false}
@@ -58,9 +58,9 @@ function resolveExistOptions(options: FSExistOptions): Required<FSExistOptions> 
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
- * > - System Information \[Deno: `sys`\]
+ * > - **System Information (Deno: `sys`):**
  * >   - `gid` (Optional, POSIX/UNIX Platforms)
  * >   - `uid` (Optional, POSIX/UNIX Platforms)
  * @param {string | URL} path Path.
@@ -156,9 +156,9 @@ export async function exist(path: string | URL, options: FSExistOptions = {}): P
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
- * > - System Information \[Deno: `sys`\]
+ * > - **System Information (Deno: `sys`):**
  * >   - `gid` (Optional, POSIX/UNIX Platforms)
  * >   - `uid` (Optional, POSIX/UNIX Platforms)
  * @param {string | URL} path Path.

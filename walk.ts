@@ -395,7 +395,7 @@ function resolveWalkOptions(options: FSWalkOptions): FSWalkOptionsInternal {
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
  * @param {string | URL} root Root directory.
  * @param {FSWalkOptions & { extraInfo?: false; }} [options] Options.
@@ -409,7 +409,7 @@ export async function walk(root: string | URL, options?: FSWalkOptions & { extra
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
  * @param {string | URL} root Root directory.
  * @param {FSWalkOptions & { extraInfo: true; }} options Options.
@@ -442,7 +442,7 @@ export async function walk(root: string | URL, options: FSWalkOptions = {}): Pro
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
  * @param {string | URL} root Root directory.
  * @param {FSWalkOptions & { extraInfo?: false; }} [options] Options.
@@ -456,7 +456,7 @@ export function walkSync(root: string | URL, options?: FSWalkOptions & { extraIn
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
  * @param {string | URL} root Root directory.
  * @param {FSWalkOptions & { extraInfo: true; }} options Options.

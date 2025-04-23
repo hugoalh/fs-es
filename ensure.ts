@@ -32,9 +32,9 @@ function getEntityTypeString(stat: Deno.DirEntry | Deno.FileInfo): EntityType {
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
- * > - File System - Write \[Deno: `write`; NodeJS 🧪: `fs-write`\]
+ * > - **File System - Write (Deno: `write`; NodeJS 🧪: `fs-write`):**
  * >   - *Resources*
  * @param {string | URL} path Path of the directory that need to ensure.
  * @returns {Promise<void>}
@@ -66,9 +66,9 @@ export {
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
- * > - File System - Write \[Deno: `write`; NodeJS 🧪: `fs-write`\]
+ * > - **File System - Write (Deno: `write`; NodeJS 🧪: `fs-write`):**
  * >   - *Resources*
  * @param {string | URL} path Path of the directory that need to ensure.
  * @returns {void}
@@ -100,9 +100,9 @@ export {
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
- * > - File System - Write \[Deno: `write`; NodeJS 🧪: `fs-write`\]
+ * > - **File System - Write (Deno: `write`; NodeJS 🧪: `fs-write`):**
  * >   - *Resources*
  * @param {string | URL} path Path of the file that need to ensure.
  * @returns {Promise<void>}
@@ -133,9 +133,9 @@ export async function ensureFile(path: string | URL): Promise<void> {
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
- * > - File System - Write \[Deno: `write`; NodeJS 🧪: `fs-write`\]
+ * > - **File System - Write (Deno: `write`; NodeJS 🧪: `fs-write`):**
  * >   - *Resources*
  * @param {string | URL} path Path of the file that need to ensure.
  * @returns {void}
@@ -168,9 +168,9 @@ export function ensureFileSync(path: string | URL): void {
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
- * > - File System - Write \[Deno: `write`; NodeJS 🧪: `fs-write`\]
+ * > - **File System - Write (Deno: `write`; NodeJS 🧪: `fs-write`):**
  * >   - *Resources*
  * @param {string | URL} sourcePath Path of the source file.
  * @param {string | URL} targetPath Path of the hard link.
@@ -195,9 +195,9 @@ export async function ensureLink(sourcePath: string | URL, targetPath: string | 
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
- * > - File System - Write \[Deno: `write`; NodeJS 🧪: `fs-write`\]
+ * > - **File System - Write (Deno: `write`; NodeJS 🧪: `fs-write`):**
  * >   - *Resources*
  * @param {string | URL} sourcePath Path of the source file.
  * @param {string | URL} targetPath Path of the hard link.
@@ -220,9 +220,9 @@ export function ensureLinkSync(sourcePath: string | URL, targetPath: string | UR
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
- * > - File System - Write \[Deno: `write`; NodeJS 🧪: `fs-write`\]
+ * > - **File System - Write (Deno: `write`; NodeJS 🧪: `fs-write`):**
  * >   - *Resources*
  * @param {string | URL} sourcePath Path of the source.
  * @param {string | URL} targetPath Path of the symlink.
@@ -264,9 +264,9 @@ export async function ensureSymlink(sourcePath: string | URL, targetPath: string
  * 
  * > **🛡️ Runtime Permissions**
  * > 
- * > - File System - Read \[Deno: `read`; NodeJS 🧪: `fs-read`\]
+ * > - **File System - Read (Deno: `read`; NodeJS 🧪: `fs-read`):**
  * >   - *Resources*
- * > - File System - Write \[Deno: `write`; NodeJS 🧪: `fs-write`\]
+ * > - **File System - Write (Deno: `write`; NodeJS 🧪: `fs-write`):**
  * >   - *Resources*
  * @param {string | URL} sourcePath Path of the source.
  * @param {string | URL} targetPath Path of the symlink.
