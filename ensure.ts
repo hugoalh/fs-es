@@ -242,6 +242,7 @@ export async function ensureSymlink(sourcePath: string | URL, targetPath: string
 			throw new Error(`Unable to ensure the symlink \`${targetPath}\` exist, path is type of ${getEntityTypeString(targetStatL)}!`);
 		}
 		if (sourcePathFmt !== await Deno.readLink(targetPath)) {
+			//deno-lint-ignore no-throw-literal
 			throw undefined;
 		}
 	} catch (error) {
@@ -286,6 +287,7 @@ export function ensureSymlinkSync(sourcePath: string | URL, targetPath: string |
 			throw new Error(`Unable to ensure the symlink \`${targetPath}\` exist, path is type of ${getEntityTypeString(targetStatL)}!`);
 		}
 		if (sourcePathFmt !== Deno.readLinkSync(targetPath)) {
+			//deno-lint-ignore no-throw-literal
 			throw undefined;
 		}
 	} catch (error) {
