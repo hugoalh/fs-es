@@ -57,7 +57,6 @@ export interface FSWalkEntry {
 	 */
 	viaSymlinkDirectory: boolean;
 }
-//deno-lint-ignore hugoalh/no-duplicate-interfaces
 export interface FSWalkEntryExtra extends Omit<Deno.FileInfo, "isDirectory" | "isFile" | "isSymlink">, FSWalkEntry {
 }
 export type FSActionOnPermissionDenied =
@@ -127,7 +126,6 @@ export interface FSWalkOptions {
 	 */
 	walkSymlinkDirectories?: boolean;
 }
-//deno-lint-ignore hugoalh/no-duplicate-interfaces
 interface FSWalkOptionsInternal extends Required<Omit<FSWalkOptions, "extensions" | "matches" | "skips">>, Pick<FSWalkOptions, "extensions" | "matches" | "skips"> {
 }
 function isEntryYieldable(entry: FSWalkEntry, options: FSWalkOptionsInternal): boolean {
