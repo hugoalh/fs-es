@@ -3,7 +3,8 @@
 [**⚖️** MIT](./LICENSE.md)
 
 🔗
-[GitHub](https://github.com/hugoalh/fs-es)
+[DistBoard @hugoalh](https://hugoalh.github.io/distboard/fs_ecmascript)
+● [GitHub](https://github.com/hugoalh/fs-es)
 ● [JSR](https://jsr.io/@hugoalh/fs)
 ● [NPM](https://www.npmjs.com/package/@hugoalh/fs)
 
@@ -23,32 +24,18 @@ Any runtime which support ECMAScript should able to use this; These runtimes are
 - File System - Write (Deno: `write`; NodeJS: `fs-write`) (Optional)
 - Subprocesses (Deno: `run`)
   - `pwsh` (Optional)
-- System Information (Deno: `sys`)
-  - `gid` (Optional, POSIX/UNIX Platforms)
-  - `uid` (Optional, POSIX/UNIX Platforms)
+- System Information (Deno: `sys`) (Optional, POSIX/UNIX Platforms)
+  - `gid`
+  - `uid`
 
-## #️⃣ Sources & Entrypoints
-
-- GitHub Raw
-  ```
-  https://raw.githubusercontent.com/hugoalh/fs-es/{Tag}/mod.ts
-  ```
-- JSR
-  ```
-  jsr:@hugoalh/fs[@{Tag}]
-  ```
-- NPM
-  ```
-  npm:@hugoalh/fs[@{Tag}]
-  ```
+## #️⃣ Entrypoints
 
 | **Name** | **Path** | **Description** |
 |:--|:--|:--|
 | `.` | `./mod.ts` | Default. |
 
 > [!NOTE]
-> - Different runtimes have vary support for the sources and entrypoints, visit the runtime documentation for more information.
-> - It is recommended to include tag for immutability.
+> - Different runtimes have vary support for the entrypoints, visit the runtime documentation for more information.
 > - These are not part of the public APIs hence should not be used:
 >   - Benchmark/Test file (e.g.: `example.bench.ts`, `example.test.ts`).
 >   - Entrypoint name or path include any underscore prefix (e.g.: `_example.ts`, `foo/_example.ts`).
@@ -90,7 +77,7 @@ Any runtime which support ECMAScript should able to use this; These runtimes are
 
 > [!NOTE]
 > - For the full or prettier documentation, can visit via:
->   - [Deno CLI `deno doc`](https://docs.deno.com/runtime/reference/cli/doc/)
+>   - [Deno CLI `deno doc`](https://docs.deno.com/runtime/reference/cli/doc)
 >   - [JSR](https://jsr.io/@hugoalh/fs)
 
 ## ✍️ Examples
